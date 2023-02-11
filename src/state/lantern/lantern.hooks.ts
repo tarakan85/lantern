@@ -5,16 +5,11 @@ import * as rx from "rxjs";
 import * as events from "./latern.rx";
 import { lanterMachine, TContext } from "./lantern.machine";
 
-const machine = lanterMachine.withConfig({
-  services: {
-    click: () => events.click$.pipe(rx.map((type) => ({ type }))),
-    doubleClick: () => events.doubleClick$.pipe(rx.map((type) => ({ type }))),
-    longPress: () =>
-      events.createLongPress(800).pipe(rx.map((type) => ({ type }))),
-  },
-});
+const service = interpret(lanterMachine).start();
 
-const service = interpret(machine).start();
+rx.merge(events.click$, events.doubleClick$, events.longPress$)
+  .pipe(rx.map((type) => ({ type })))
+  .subscribe(service.send);
 
 const state$ = rx
   .from(service)

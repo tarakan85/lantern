@@ -1,12 +1,7 @@
 import * as rx from "rxjs";
 
 export type TButtonDispatchEvents = "press" | "release";
-export type TButtonEvents =
-  | "press"
-  | "release"
-  | "click"
-  | "doubleClick"
-  | "longPress";
+export type TButtonEvents = "click" | "doubleClick" | "longPress";
 
 const buttonEvents$ = new rx.Subject<TButtonDispatchEvents>();
 
@@ -20,11 +15,30 @@ export const release$ = buttonEvents$.pipe(
   rx.filter((event) => event === "release")
 );
 
+const isLongPress = (
+  event: TButtonDispatchEvents | "longPress"
+): event is "longPress" => event === "longPress";
+
+export const createLongPress = (time: number) => {
+  return press$.pipe(
+    rx.switchMap(() =>
+      rx.timer(time).pipe(
+        rx.map(() => "longPress" as const),
+        rx.raceWith(release$)
+      )
+    ),
+    rx.filter(isLongPress),
+    rx.share()
+  );
+};
+
+export const longPress$ = createLongPress(800);
+
 export const click$ = press$.pipe(
   rx.switchMap(() =>
-    rx.timer(300).pipe(
-      rx.zipWith(release$.pipe(rx.take(1))),
-      rx.map(() => "click" as const)
+    rx.zip(rx.timer(300), release$.pipe(rx.take(1))).pipe(
+      rx.map(() => "click" as const),
+      rx.takeUntil(longPress$)
     )
   )
 );
@@ -42,15 +56,3 @@ export const doubleClick$ = press$.pipe(
     )
   )
 );
-
-export const createLongPress = (time: number) => {
-  return press$.pipe(
-    rx.switchMap(() =>
-      rx.timer(time).pipe(
-        rx.map(() => "longPress" as const),
-        rx.raceWith(release$)
-      )
-    ),
-    rx.filter((action) => action === "longPress")
-  );
-};
