@@ -42,11 +42,15 @@ export const lanterMachine = lanternModel.createMachine({
       on: {
         longPress: "turnedOn.modeHistory",
       },
+      invoke: [{ src: "longPress" }, { src: "turnOnChargingIndicator" }],
     },
     turnedOn: {
       entry: lanternModel.assign({ isTurnedOn: true }),
       on: {
         longPress: "turnedOff",
+      },
+      invoke: {
+        src: "longPress",
       },
       initial: "regular",
       states: {
@@ -56,11 +60,17 @@ export const lanterMachine = lanternModel.createMachine({
           on: {
             doubleClick: "colorful.colorHistory",
           },
+          invoke: {
+            src: "doubleClick",
+          },
           states: {
             low: {
               entry: lanternModel.assign({ intensity: "low" }),
               on: {
                 click: "medium",
+              },
+              invoke: {
+                src: "click",
               },
             },
             medium: {
@@ -68,11 +78,17 @@ export const lanterMachine = lanternModel.createMachine({
               on: {
                 click: "high",
               },
+              invoke: {
+                src: "click",
+              },
             },
             high: {
               entry: lanternModel.assign({ intensity: "high" }),
               on: {
                 click: "low",
+              },
+              invoke: {
+                src: "click",
               },
             },
             intensityHistory: {
@@ -87,17 +103,26 @@ export const lanterMachine = lanternModel.createMachine({
           on: {
             doubleClick: "regular.intensityHistory",
           },
+          invoke: {
+            src: "doubleClick",
+          },
           states: {
             red: {
               entry: lanternModel.assign({ color: "red" }),
               on: {
                 click: "blue",
               },
+              invoke: {
+                src: "click",
+              },
             },
             blue: {
               entry: lanternModel.assign({ color: "blue" }),
               on: {
                 click: "red",
+              },
+              invoke: {
+                src: "click",
               },
             },
             colorHistory: {
