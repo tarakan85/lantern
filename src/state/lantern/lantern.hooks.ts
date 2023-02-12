@@ -2,19 +2,11 @@ import * as React from "react";
 import { interpret } from "xstate";
 import * as rx from "rxjs";
 
-import * as events from "./latern.rx";
+import * as buttonEvents from "./button.events";
+
 import { lanterMachine, TContext } from "./lantern.machine";
 
-const machine = lanterMachine.withConfig({
-  services: {
-    clickDelayed: () => events.clickDelayed$.pipe(rx.map((type) => ({ type }))),
-    doubleClick: () => events.doubleClick$.pipe(rx.map((type) => ({ type }))),
-    longPress: () =>
-      events.createLongPress(800).pipe(rx.map((type) => ({ type }))),
-  },
-});
-
-const service = interpret(machine).start();
+const service = interpret(lanterMachine).start();
 
 const state$ = rx
   .from(service)
@@ -29,7 +21,7 @@ export const useLantern = () => {
 
   return {
     state,
-    sendPress: events.sendPress,
-    sendRelease: events.sendRelease,
+    sendPress: buttonEvents.sendPress,
+    sendRelease: buttonEvents.sendRelease,
   };
 };

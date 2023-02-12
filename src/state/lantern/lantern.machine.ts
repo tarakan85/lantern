@@ -1,141 +1,149 @@
+import * as rx from "rxjs";
+import { ContextFrom, EventFrom } from "xstate";
 import { createModel } from "xstate/lib/model";
 
-type TModes = "regular" | "colorful";
-type TIntensity = "low" | "medium" | "high";
-type TColor = "red" | "blue";
+import * as lanternEvents from "./lantern.events";
+import * as buttonEvents from "./button.events";
 
-export type TContext = {
-  isTurnedOn: boolean;
-  mode: TModes;
-  intensity: TIntensity;
-  color: TColor;
-  showChargeIndicator: boolean;
-  isCharging: boolean;
-};
+export type TModes = "regular" | "colorful";
+export type TIntensity = "low" | "medium" | "high";
+export type TColor = "red" | "blue";
 
 const lanternModel = createModel(
   {
     isTurnedOn: false,
-    mode: "regular",
-    intensity: "low",
-    color: "red",
+    mode: "regular" as TModes,
+    intensity: "low" as TIntensity,
+    color: "red" as TColor,
     showChargeIndicator: false,
     isCharging: false,
-  } as TContext,
+  },
   {
     events: {
-      clickDelayed: () => ({}),
-      longPress: () => ({}),
-      doubleClick: () => ({}),
+      togglePower: () => ({}),
+      switchSubmode: () => ({}),
+      switchMode: () => ({}),
     },
   }
 );
 
-export const lanterMachine = lanternModel.createMachine({
-  predictableActionArguments: true,
-  id: "app",
-  context: lanternModel.initialContext,
-  initial: "turnedOff",
-  states: {
-    turnedOff: {
-      entry: lanternModel.assign({ isTurnedOn: false }),
-      on: {
-        longPress: "turnedOn.modeHistory",
-      },
-      invoke: [{ src: "longPress" }, { src: "turnOnChargingIndicator" }],
-    },
-    turnedOn: {
-      entry: lanternModel.assign({ isTurnedOn: true }),
-      on: {
-        longPress: "turnedOff",
-      },
-      invoke: {
-        src: "longPress",
-      },
-      initial: "regular",
-      states: {
-        regular: {
-          initial: "low",
-          entry: lanternModel.assign({ mode: "regular" }),
-          on: {
-            doubleClick: "colorful.colorHistory",
-          },
-          invoke: {
-            src: "doubleClick",
-          },
-          states: {
-            low: {
-              entry: lanternModel.assign({ intensity: "low" }),
-              on: {
-                clickDelayed: "medium",
-              },
-              invoke: {
-                src: "clickDelayed",
-              },
-            },
-            medium: {
-              entry: lanternModel.assign({ intensity: "medium" }),
-              on: {
-                clickDelayed: "high",
-              },
-              invoke: {
-                src: "clickDelayed",
-              },
-            },
-            high: {
-              entry: lanternModel.assign({ intensity: "high" }),
-              on: {
-                clickDelayed: "low",
-              },
-              invoke: {
-                src: "clickDelayed",
-              },
-            },
-            intensityHistory: {
-              type: "history",
-              history: "shallow",
-            },
-          },
+export type TContext = ContextFrom<typeof lanternModel>;
+export type TEvents = EventFrom<typeof lanternModel>;
+
+export const lanterMachine = lanternModel.createMachine(
+  {
+    predictableActionArguments: true,
+    id: "app",
+    context: lanternModel.initialContext,
+    initial: "turnedOff",
+    states: {
+      turnedOff: {
+        entry: lanternModel.assign({ isTurnedOn: false }),
+        on: {
+          togglePower: "turnedOn.modeHistory",
         },
-        colorful: {
-          initial: "red",
-          entry: lanternModel.assign({ mode: "colorful" }),
-          on: {
-            doubleClick: "regular.intensityHistory",
-          },
-          invoke: {
-            src: "doubleClick",
-          },
-          states: {
-            red: {
-              entry: lanternModel.assign({ color: "red" }),
-              on: {
-                clickDelayed: "blue",
-              },
-              invoke: {
-                src: "clickDelayed",
-              },
-            },
-            blue: {
-              entry: lanternModel.assign({ color: "blue" }),
-              on: {
-                clickDelayed: "red",
-              },
-              invoke: {
-                src: "clickDelayed",
-              },
-            },
-            colorHistory: {
-              type: "history",
-              history: "shallow",
-            },
-          },
+        invoke: [{ src: "togglePower" }],
+      },
+      turnedOn: {
+        entry: lanternModel.assign({ isTurnedOn: true }),
+        on: {
+          togglePower: "turnedOff",
         },
-        modeHistory: {
-          type: "history",
-          history: "deep",
+        invoke: {
+          src: "togglePower",
+        },
+        initial: "regular",
+        states: {
+          regular: {
+            initial: "low",
+            entry: lanternModel.assign({ mode: "regular" }),
+            on: {
+              switchMode: "colorful.colorHistory",
+            },
+            invoke: {
+              src: "switchMode",
+            },
+            states: {
+              low: {
+                entry: lanternModel.assign({ intensity: "low" }),
+                on: {
+                  switchSubmode: "medium",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              medium: {
+                entry: lanternModel.assign({ intensity: "medium" }),
+                on: {
+                  switchSubmode: "high",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              high: {
+                entry: lanternModel.assign({ intensity: "high" }),
+                on: {
+                  switchSubmode: "low",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              intensityHistory: {
+                type: "history",
+                history: "shallow",
+              },
+            },
+          },
+          colorful: {
+            initial: "red",
+            entry: lanternModel.assign({ mode: "colorful" }),
+            on: {
+              switchMode: "regular.intensityHistory",
+            },
+            invoke: {
+              src: "switchMode",
+            },
+            states: {
+              red: {
+                entry: lanternModel.assign({ color: "red" }),
+                on: {
+                  switchSubmode: "blue",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              blue: {
+                entry: lanternModel.assign({ color: "blue" }),
+                on: {
+                  switchSubmode: "red",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              colorHistory: {
+                type: "history",
+                history: "shallow",
+              },
+            },
+          },
+          modeHistory: {
+            type: "history",
+            history: "deep",
+          },
         },
       },
     },
   },
-});
+  {
+    services: {
+      togglePower: () => lanternEvents.togglePower$,
+      switchMode: () => lanternEvents.switchMode$,
+      switchSubmode: () => lanternEvents.switchSubmode$,
+    },
+  }
+);
