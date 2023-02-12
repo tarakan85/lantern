@@ -23,6 +23,8 @@ const lanternModel = createModel(
       togglePower: () => ({}),
       switchSubmode: () => ({}),
       switchMode: () => ({}),
+      showChargingIndicator: () => ({}),
+      hideChargingIndicator: () => ({}),
     },
   }
 );
@@ -41,8 +43,11 @@ export const lanterMachine = lanternModel.createMachine(
         entry: lanternModel.assign({ isTurnedOn: false }),
         on: {
           togglePower: "turnedOn.modeHistory",
+          showChargingIndicator: {
+            actions: lanternModel.assign({ showChargeIndicator: true }),
+          },
         },
-        invoke: [{ src: "togglePower" }],
+        invoke: [{ src: "togglePower" }, { src: "showChargingIndicator" }],
       },
       turnedOn: {
         entry: lanternModel.assign({ isTurnedOn: true }),
@@ -138,12 +143,20 @@ export const lanterMachine = lanternModel.createMachine(
         },
       },
     },
+    on: {
+      hideChargingIndicator: {
+        actions: lanternModel.assign({ showChargeIndicator: false }),
+      },
+    },
+    invoke: { src: "hideChargingIndicator" },
   },
   {
     services: {
       togglePower: () => lanternEvents.togglePower$,
       switchMode: () => lanternEvents.switchMode$,
       switchSubmode: () => lanternEvents.switchSubmode$,
+      showChargingIndicator: () => lanternEvents.showChargingIndicator$,
+      hideChargingIndicator: () => lanternEvents.hideChargingIndicator$,
     },
   }
 );

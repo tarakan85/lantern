@@ -21,11 +21,6 @@ export const release$ = buttonEvents$.pipe(
   rx.filter((event) => event === "release")
 );
 
-export const click$ = press$.pipe(
-  rx.exhaustMap(() => release$),
-  rx.map(() => "click" as const)
-);
-
 export const clickDelayed$ = press$.pipe(
   rx.switchMap(() =>
     rx.timer(300).pipe(
