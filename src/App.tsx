@@ -15,6 +15,7 @@ export const App = () => {
         >
           Tap
         </Button>
+        <Button onClick={lantern.sendToggleCharger}>Toggle charger</Button>
       </div>
       <Box component="code" sx={{ maxWidth: 400, display: "block" }}>
         {JSON.stringify(lantern.state, undefined, 2)}

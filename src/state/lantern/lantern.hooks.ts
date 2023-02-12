@@ -1,15 +1,12 @@
 import * as React from "react";
-import { interpret } from "xstate";
 import * as rx from "rxjs";
 
 import * as buttonEvents from "./button.events";
-
-import { lanterMachine, TContext } from "./lantern.machine";
-
-const service = interpret(lanterMachine).start();
+import * as lanternEvents from "./lantern.events";
+import { lanternService, TContext } from "./lantern.machine";
 
 const state$ = rx
-  .from(service)
+  .from(lanternService)
   .pipe(rx.filter((state) => state.changed === true));
 
 export const useLantern = () => {
@@ -23,5 +20,8 @@ export const useLantern = () => {
     state,
     sendPress: buttonEvents.sendPress,
     sendRelease: buttonEvents.sendRelease,
+    sendToggleCharger: state.isCharging
+      ? lanternEvents.sendRemoveFromCharge
+      : lanternEvents.sendPutOnCharge,
   };
 };

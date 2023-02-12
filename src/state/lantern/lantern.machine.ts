@@ -1,9 +1,8 @@
-import * as rx from "rxjs";
 import { ContextFrom, EventFrom } from "xstate";
 import { createModel } from "xstate/lib/model";
+import { interpret } from "xstate";
 
 import * as lanternEvents from "./lantern.events";
-import * as buttonEvents from "./button.events";
 
 export type TModes = "regular" | "colorful";
 export type TIntensity = "low" | "medium" | "high";
@@ -25,6 +24,8 @@ const lanternModel = createModel(
       switchMode: () => ({}),
       showChargingIndicator: () => ({}),
       hideChargingIndicator: () => ({}),
+      putOnCharge: () => ({}),
+      removeFromCharge: () => ({}),
     },
   }
 );
@@ -32,7 +33,7 @@ const lanternModel = createModel(
 export type TContext = ContextFrom<typeof lanternModel>;
 export type TEvents = EventFrom<typeof lanternModel>;
 
-export const lanterMachine = lanternModel.createMachine(
+const lanterMachine = lanternModel.createMachine(
   {
     predictableActionArguments: true,
     id: "app",
@@ -146,9 +147,23 @@ export const lanterMachine = lanternModel.createMachine(
     on: {
       hideChargingIndicator: {
         actions: lanternModel.assign({ showChargeIndicator: false }),
+        cond: (ctx) => !ctx.isCharging,
+      },
+      putOnCharge: {
+        actions: lanternModel.assign({
+          isCharging: true,
+          showChargeIndicator: true,
+        }),
+      },
+      removeFromCharge: {
+        actions: lanternModel.assign({ isCharging: false }),
       },
     },
-    invoke: { src: "hideChargingIndicator" },
+    invoke: [
+      { src: "hideChargingIndicator" },
+      { src: "putOnCharge" },
+      { src: "removeFromCharge" },
+    ],
   },
   {
     services: {
@@ -157,6 +172,10 @@ export const lanterMachine = lanternModel.createMachine(
       switchSubmode: () => lanternEvents.switchSubmode$,
       showChargingIndicator: () => lanternEvents.showChargingIndicator$,
       hideChargingIndicator: () => lanternEvents.hideChargingIndicator$,
+      putOnCharge: () => lanternEvents.putOnCharge$,
+      removeFromCharge: () => lanternEvents.removeFromCharge$,
     },
   }
 );
+
+export const lanternService = interpret(lanterMachine).start();
