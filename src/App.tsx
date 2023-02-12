@@ -8,11 +8,7 @@ export const App = () => {
   return (
     <div>
       <div>
-        <Button
-          onMouseDown={lantern.sendPress}
-          onMouseUp={lantern.sendRelease}
-          onMouseLeave={lantern.sendRelease}
-        >
+        <Button onMouseDown={lantern.sendPress} onMouseUp={lantern.sendRelease}>
           Tap
         </Button>
         <Button onClick={lantern.sendToggleCharger}>Toggle charger</Button>
