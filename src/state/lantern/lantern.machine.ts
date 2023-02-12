@@ -24,7 +24,7 @@ const lanternModel = createModel(
   } as TContext,
   {
     events: {
-      click: () => ({}),
+      clickDelayed: () => ({}),
       longPress: () => ({}),
       doubleClick: () => ({}),
     },
@@ -67,28 +67,28 @@ export const lanterMachine = lanternModel.createMachine({
             low: {
               entry: lanternModel.assign({ intensity: "low" }),
               on: {
-                click: "medium",
+                clickDelayed: "medium",
               },
               invoke: {
-                src: "click",
+                src: "clickDelayed",
               },
             },
             medium: {
               entry: lanternModel.assign({ intensity: "medium" }),
               on: {
-                click: "high",
+                clickDelayed: "high",
               },
               invoke: {
-                src: "click",
+                src: "clickDelayed",
               },
             },
             high: {
               entry: lanternModel.assign({ intensity: "high" }),
               on: {
-                click: "low",
+                clickDelayed: "low",
               },
               invoke: {
-                src: "click",
+                src: "clickDelayed",
               },
             },
             intensityHistory: {
@@ -110,19 +110,19 @@ export const lanterMachine = lanternModel.createMachine({
             red: {
               entry: lanternModel.assign({ color: "red" }),
               on: {
-                click: "blue",
+                clickDelayed: "blue",
               },
               invoke: {
-                src: "click",
+                src: "clickDelayed",
               },
             },
             blue: {
               entry: lanternModel.assign({ color: "blue" }),
               on: {
-                click: "red",
+                clickDelayed: "red",
               },
               invoke: {
-                src: "click",
+                src: "clickDelayed",
               },
             },
             colorHistory: {

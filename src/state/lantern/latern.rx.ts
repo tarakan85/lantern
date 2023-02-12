@@ -4,7 +4,7 @@ export type TButtonDispatchEvents = "press" | "release";
 export type TButtonEvents =
   | "press"
   | "release"
-  | "click"
+  | "clickDelayed"
   | "doubleClick"
   | "longPress";
 
@@ -20,11 +20,11 @@ export const release$ = buttonEvents$.pipe(
   rx.filter((event) => event === "release")
 );
 
-export const click$ = press$.pipe(
+export const clickDelayed$ = press$.pipe(
   rx.switchMap(() =>
     rx.timer(300).pipe(
       rx.zipWith(release$.pipe(rx.take(1))),
-      rx.map(() => "click" as const)
+      rx.map(() => "clickDelayed" as const)
     )
   )
 );

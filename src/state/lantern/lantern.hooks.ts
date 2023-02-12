@@ -7,7 +7,7 @@ import { lanterMachine, TContext } from "./lantern.machine";
 
 const machine = lanterMachine.withConfig({
   services: {
-    click: () => events.click$.pipe(rx.map((type) => ({ type }))),
+    clickDelayed: () => events.clickDelayed$.pipe(rx.map((type) => ({ type }))),
     doubleClick: () => events.doubleClick$.pipe(rx.map((type) => ({ type }))),
     longPress: () =>
       events.createLongPress(800).pipe(rx.map((type) => ({ type }))),
