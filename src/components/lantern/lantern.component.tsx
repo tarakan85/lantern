@@ -3,7 +3,7 @@ import { Box, IconButton } from "@mui/material";
 import PowerSettingsNewSharpIcon from "@mui/icons-material/PowerSettingsNewSharp";
 import { yellow, red } from "@mui/material/colors";
 
-import { useRedBlueFlicker } from "./hooks";
+import { useRedBlueFlicker, useRedFlicker } from "./hooks";
 import { useLantern } from "~/state/lantern/lantern.hooks";
 import { capitalizeFirst } from "~/utils/string";
 
@@ -18,17 +18,19 @@ export const Lantern = () => {
 
   const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
 
-  const redBlueColor = useRedBlueFlicker(
+  const redBlueFlickerColor = useRedBlueFlicker(
     modesCombo === "colorfulRedBlueFlicker"
   );
+
+  const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
 
   const colorMap: Record<string, string> = {
     regularLow: yellow[100],
     regularMedium: yellow[300],
     regularHigh: yellow[500],
     colorfulRedStatic: red[500],
-    colorfulRedFlicker: "orange",
-    colorfulRedBlueFlicker: redBlueColor,
+    colorfulRedFlicker: redFlickerColor,
+    colorfulRedBlueFlicker: redBlueFlickerColor,
     colorfulIridescent: "aqua",
   };
 
