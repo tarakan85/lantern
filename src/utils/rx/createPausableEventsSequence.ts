@@ -1,26 +1,32 @@
 import * as rx from "rxjs";
 import { nextIndex } from "~/utils/array";
 
-type TEvent<T> = {
-  value: T;
+export type TEvent<TValue> = {
+  value: TValue;
   duration: number;
 };
 
-export const createPausableEventsSequence = <T extends any>(
-  events: TEvent<T>[]
+export type TState<TValue> = {
+  currentEventIndex: number;
+  events: TEvent<TValue>[];
+  isPlaying: boolean;
+};
+
+export type TDispatch = "start" | "pause" | "next";
+
+export const createPausableEventsSequence = <TValue extends any>(
+  events: TEvent<TValue>[]
 ) => {
-  type TEventsState = {
-    currentEventIndex: number;
-    events: TEvent<T>[];
-    isPlaying: boolean;
+  const dispatch$ = new rx.Subject<TDispatch>();
+
+  const initialState: TState<TValue> = {
+    currentEventIndex: 0,
+    events,
+    isPlaying: false,
   };
 
-  type TDispatchEvent = "start" | "pause" | "next";
-
-  const dispatchEvent$ = new rx.Subject<TDispatchEvent>();
-
-  const eventsState$ = dispatchEvent$.pipe(
-    rx.scan<TDispatchEvent, TEventsState>(
+  const state$ = dispatch$.pipe(
+    rx.scan<TDispatch, TState<TValue>>(
       (state, action) =>
         ({
           start: {
@@ -36,31 +42,37 @@ export const createPausableEventsSequence = <T extends any>(
             currentEventIndex: nextIndex(state.currentEventIndex, state.events),
           },
         }[action]),
-      { currentEventIndex: 0, events, isPlaying: false }
-    )
+      initialState
+    ),
+    rx.shareReplay(1)
   );
 
-  const state$ = eventsState$.pipe(
-    rx.switchMap((state) => {
-      const index = state.currentEventIndex;
-      const value = state.events[index];
-      const duration = state.events[index].duration;
+  state$
+    .pipe(
+      rx.switchMap((state) => {
+        const index = state.currentEventIndex;
+        const duration = state.events[index].duration;
 
-      return state.isPlaying
-        ? rx.concat(
-            rx.of(value),
-            rx.timer(duration).pipe(
-              rx.tap(() => dispatchEvent$.next("next")),
+        return state.isPlaying
+          ? rx.timer(duration).pipe(
+              rx.tap(() => dispatch$.next("next")),
               rx.mergeMap(() => rx.EMPTY)
             )
-          )
-        : rx.EMPTY;
+          : rx.EMPTY;
+      })
+    )
+    .subscribe();
+
+  const currentEvent$ = state$.pipe(
+    rx.map((state) => {
+      const index = state.currentEventIndex;
+      return state.events[index];
     })
   );
 
   return {
-    subscribe: state$.subscribe.bind(state$),
-    start: () => dispatchEvent$.next("start"),
-    pause: () => dispatchEvent$.next("pause"),
+    subscribe: currentEvent$.subscribe.bind(currentEvent$),
+    start: () => dispatch$.next("start"),
+    pause: () => dispatch$.next("pause"),
   };
 };
