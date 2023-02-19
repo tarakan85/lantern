@@ -1,17 +1,17 @@
 import * as React from "react";
-import { red } from "@mui/material/colors";
+import { indigo } from "@mui/material/colors";
 
 import { createPausableEventsSequence } from "~/utils/rx";
 
-type TFlicker = typeof red[500] | "grey.50";
+type TFlicker = typeof indigo[500] | "transparent";
 
 const flickerSeq = createPausableEventsSequence<TFlicker>([
-  { value: red[500], duration: 500 },
-  { value: "grey.50" as const, duration: 500 },
+  { value: indigo[500], duration: 500 },
+  { value: "transparent" as const, duration: 500 },
 ]);
 
-export const useRedFlicker = (doFlicker: boolean) => {
-  const [color, setColor] = React.useState<TFlicker>("grey.50");
+export const useChargingIndicatorFlicker = (doFlicker: boolean) => {
+  const [color, setColor] = React.useState<TFlicker>("transparent");
 
   React.useEffect(() => {
     const subscription = flickerSeq.subscribe((event) => setColor(event.value));

@@ -1,5 +1,8 @@
+import range from "lodash/range";
 import { Box, IconButton } from "@mui/material";
 import PowerSettingsNewSharpIcon from "@mui/icons-material/PowerSettingsNewSharp";
+import PowerSharpIcon from "@mui/icons-material/PowerSharp";
+import PowerOffSharpIcon from "@mui/icons-material/PowerOffSharp";
 import {
   yellow,
   red,
@@ -7,9 +10,14 @@ import {
   blue,
   purple,
   green,
+  indigo,
 } from "@mui/material/colors";
 
-import { useRedBlueFlicker, useRedFlicker } from "./hooks";
+import {
+  useRedBlueFlicker,
+  useRedFlicker,
+  useChargingIndicatorFlicker,
+} from "./hooks";
 import { useLantern } from "~/state/lantern/lantern.hooks";
 import { capitalizeFirst } from "~/utils/string";
 
@@ -29,6 +37,10 @@ export const Lantern = () => {
   );
 
   const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
+
+  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
+    lantern.state.isCharging
+  );
 
   const colorMap: Record<string, string> = {
     regularLow: yellow[100],
@@ -52,16 +64,42 @@ export const Lantern = () => {
       }}
     >
       <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          position: "relative",
+        }}
       >
+        <IconButton
+          sx={{
+            border: "1px solid",
+            borderColor: "grey.300",
+            position: "absolute",
+            top: "-40px",
+            right: "-40px",
+          }}
+          size="small"
+          onClick={() => lantern.sendToggleCharger()}
+        >
+          {lantern.state.isCharging ? (
+            <PowerOffSharpIcon sx={{ color: "grey.600" }} />
+          ) : (
+            <PowerSharpIcon sx={{ color: blue[600] }} />
+          )}
+        </IconButton>
         <Box
           sx={[
             {
               border: "1px solid",
               borderColor: "grey.700",
               borderRadius: "8px",
-              padding: "90px 80px",
+              height: "200px",
+              width: "164px",
               bgcolor: color,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
             },
             modesCombo === "colorfulIridescent" && {
               animationName: "backgroundColorPalette",
@@ -90,7 +128,32 @@ export const Lantern = () => {
               },
             },
           ]}
-        />
+        >
+          {lantern.state.showChargeIndicator && (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Box
+                sx={{
+                  bgcolor: lantern.state.isCharging
+                    ? chargingIndicatorFlickerColor
+                    : indigo[500],
+                  borderRadius: "50%",
+                  padding: "6px",
+                  margin: "4px",
+                }}
+              />
+              {range(3).map(() => (
+                <Box
+                  sx={{
+                    bgcolor: indigo[500],
+                    borderRadius: "50%",
+                    padding: "6px",
+                    margin: "4px",
+                  }}
+                />
+              ))}
+            </Box>
+          )}
+        </Box>
         <Box
           sx={{
             border: "1px solid",
