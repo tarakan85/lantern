@@ -3,16 +3,17 @@ import * as rx from "rxjs";
 
 import * as buttonEvents from "./button.events";
 import * as lanternEvents from "./lantern.events";
-import { lanternService, TContext } from "./lantern.machine";
+import { lanternService, lanternModel } from "./lantern.machine";
 
-const state$ = rx
-  .from(lanternService)
-  .pipe(rx.filter((state) => state.changed === true));
+const state$ = rx.from(lanternService).pipe(
+  rx.filter((state) => state.changed === true),
+  rx.map((state) => state.context)
+);
 
 export const useLantern = () => {
-  const [state, setState] = React.useState({} as TContext);
+  const [state, setState] = React.useState(lanternModel.initialContext);
   React.useEffect(() => {
-    const subscription = state$.subscribe((state) => setState(state.context));
+    const subscription = state$.subscribe(setState);
     return () => subscription.unsubscribe();
   }, []);
 

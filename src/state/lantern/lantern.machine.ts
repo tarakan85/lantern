@@ -6,14 +6,18 @@ import * as lanternEvents from "./lantern.events";
 
 export type TModes = "regular" | "colorful";
 export type TIntensity = "low" | "medium" | "high";
-export type TColor = "red" | "blue";
+export type TColor =
+  | "iridescent"
+  | "redStatic"
+  | "redFlicker"
+  | "redBlueFlicker";
 
-const lanternModel = createModel(
+export const lanternModel = createModel(
   {
     isTurnedOn: false,
     mode: "regular" as TModes,
     intensity: "low" as TIntensity,
-    color: "red" as TColor,
+    color: "redStatic" as TColor,
     showChargeIndicator: false,
     isCharging: false,
   },
@@ -104,7 +108,7 @@ const lanterMachine = lanternModel.createMachine(
             },
           },
           colorful: {
-            initial: "red",
+            initial: "redStatic",
             entry: lanternModel.assign({ mode: "colorful" }),
             on: {
               switchMode: "regular.intensityHistory",
@@ -113,19 +117,37 @@ const lanterMachine = lanternModel.createMachine(
               src: "switchMode",
             },
             states: {
-              red: {
-                entry: lanternModel.assign({ color: "red" }),
+              redStatic: {
+                entry: lanternModel.assign({ color: "redStatic" }),
                 on: {
-                  switchSubmode: "blue",
+                  switchSubmode: "redFlicker",
                 },
                 invoke: {
                   src: "switchSubmode",
                 },
               },
-              blue: {
-                entry: lanternModel.assign({ color: "blue" }),
+              redFlicker: {
+                entry: lanternModel.assign({ color: "redFlicker" }),
                 on: {
-                  switchSubmode: "red",
+                  switchSubmode: "redBlueFlicker",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              redBlueFlicker: {
+                entry: lanternModel.assign({ color: "redBlueFlicker" }),
+                on: {
+                  switchSubmode: "iridescent",
+                },
+                invoke: {
+                  src: "switchSubmode",
+                },
+              },
+              iridescent: {
+                entry: lanternModel.assign({ color: "iridescent" }),
+                on: {
+                  switchSubmode: "redStatic",
                 },
                 invoke: {
                   src: "switchSubmode",

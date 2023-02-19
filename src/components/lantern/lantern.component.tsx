@@ -1,31 +1,80 @@
 import React from "react";
-import { Button, Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import PowerSettingsNewSharpIcon from "@mui/icons-material/PowerSettingsNewSharp";
+import { yellow, red } from "@mui/material/colors";
 
 import { useRedBlueFlicker } from "./hooks";
 import { useLantern } from "~/state/lantern/lantern.hooks";
+import { capitalizeFirst } from "~/utils/string";
 
 export const Lantern = () => {
   const lantern = useLantern();
-  const [doFlicker, setDoFlicker] = React.useState(false);
-  const redBlueColor = useRedBlueFlicker(doFlicker);
+
+  const activeMode = lantern.state.mode;
+  const activeSubmode = {
+    regular: lantern.state.intensity,
+    colorful: lantern.state.color,
+  }[lantern.state.mode];
+
+  const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
+
+  const redBlueColor = useRedBlueFlicker(
+    modesCombo === "colorfulRedBlueFlicker"
+  );
+
+  const colorMap: Record<string, string> = {
+    regularLow: yellow[100],
+    regularMedium: yellow[300],
+    regularHigh: yellow[500],
+    colorfulRedStatic: red[500],
+    colorfulRedFlicker: "orange",
+    colorfulRedBlueFlicker: redBlueColor,
+    colorfulIridescent: "aqua",
+  };
+
+  const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
+
   return (
-    <div>
-      <div>
-        <Button onMouseDown={lantern.sendPress} onMouseUp={lantern.sendRelease}>
-          Tap
-        </Button>
-        <Button onClick={lantern.sendToggleCharger}>Toggle charger</Button>
-      </div>
-      <Box component="code" sx={{ maxWidth: 400, display: "block" }}>
-        {JSON.stringify(lantern.state, undefined, 2)}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        flexDirection: "column",
+      }}
+    >
+      <Box
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
+        <Box
+          sx={{
+            border: "1px solid",
+            borderColor: "grey.700",
+            borderRadius: "8px",
+            padding: "90px 80px",
+            bgcolor: color,
+          }}
+        />
+        <Box
+          sx={{
+            border: "1px solid",
+            borderRadius: "8px",
+            padding: "20px 60px",
+            borderColor: "grey.800",
+            bgcolor: "grey.200",
+          }}
+        >
+          <IconButton
+            sx={{ bgcolor: "grey.300" }}
+            size="large"
+            onMouseDown={lantern.sendPress}
+            onMouseUp={lantern.sendRelease}
+          >
+            <PowerSettingsNewSharpIcon />
+          </IconButton>
+        </Box>
       </Box>
-      <div>
-        <Button onClick={() => setDoFlicker(true)}>start flicker</Button>
-        <Button onClick={() => setDoFlicker(false)}>stop flicker</Button>
-      </div>
-      <Box component="code" sx={{ maxWidth: 400, display: "block" }}>
-        {JSON.stringify({ redBlueColor }, undefined, 2)}
-      </Box>
-    </div>
+    </Box>
   );
 };
