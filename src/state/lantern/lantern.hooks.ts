@@ -14,12 +14,7 @@ import * as selectors from "./selectors";
 export const useLantern = () => {
   const [state, setState] = React.useState(lanterMachine.initialState.context);
   React.useEffect(() => {
-    const subscription = state$
-      .pipe(
-        rx.filter((state) => state.changed === true),
-        rx.map((state) => state.context)
-      )
-      .subscribe(setState);
+    const subscription = state$.subscribe(setState);
     return () => subscription.unsubscribe();
   }, []);
 

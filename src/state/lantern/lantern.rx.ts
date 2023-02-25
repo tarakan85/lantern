@@ -22,7 +22,8 @@ export const state$ = dispatch$.pipe(
   rx.startWith(lanterMachine.initialState),
   rx.scan((state, transition) => {
     return lanterMachine.transition(state, transition as TEvents);
-  }, lanterMachine.initialState)
+  }, lanterMachine.initialState),
+  rx.map((state) => state.context)
 );
 
 // obervable types
@@ -60,7 +61,7 @@ const togglePower$ = createLongPress(800).pipe(
 
 const switchSubmode$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => state.context.isTurnedOn),
+  rx.filter(([, state]) => state.isTurnedOn),
   rx.exhaustMap(() => {
     return rx
       .timer(300)
@@ -69,10 +70,7 @@ const switchSubmode$ = press$.pipe(
         rx.map(lanternModel.events.switchSubmode),
         rx.takeUntil(
           rx
-            .merge(
-              state$.pipe(rx.filter((state) => state.context.isTurnedOn)),
-              press$
-            )
+            .merge(state$.pipe(rx.filter((state) => state.isTurnedOn)), press$)
             .pipe(rx.take(1))
         )
       );
@@ -81,7 +79,7 @@ const switchSubmode$ = press$.pipe(
 
 const switchMode$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => state.context.isTurnedOn),
+  rx.filter(([, state]) => state.isTurnedOn),
   rx.exhaustMap(() => {
     return rx.timer(300).pipe(
       rx.mergeMap(() => rx.EMPTY),
@@ -94,7 +92,7 @@ const switchMode$ = press$.pipe(
 
 const showChargingIndicator$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => !state.context.isTurnedOn),
+  rx.filter(([, state]) => !state.isTurnedOn),
   rx.switchMap(() => rx.timer(400).pipe(rx.raceWith(release$))),
   rx.map(lanternModel.events.showChargingIndicator)
 );
