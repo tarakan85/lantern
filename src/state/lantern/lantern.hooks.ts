@@ -1,10 +1,10 @@
 import * as React from "react";
 
-import { TContext } from "./lantern.machine.temp";
+import { TContext, lanterMachine } from "./lantern.machine.temp";
 import { state$, sendPress, sendRelease } from "./lantern.rx";
 
 export const useLantern = () => {
-  const [state, setState] = React.useState({} as TContext);
+  const [state, setState] = React.useState(lanterMachine.initialState.context);
   React.useEffect(() => {
     const subscription = state$.subscribe(setState);
     return () => subscription.unsubscribe();

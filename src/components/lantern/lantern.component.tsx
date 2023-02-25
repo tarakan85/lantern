@@ -24,13 +24,13 @@ import { capitalizeFirst } from "~/utils/string";
 export const Lantern = () => {
   const lantern = useLantern();
 
-  // const activeMode = lantern.state.mode;
-  // const activeSubmode = {
-  //   regular: lantern.state.intensity,
-  //   colorful: lantern.state.color,
-  // }[lantern.state.mode];
+  const activeMode = lantern.state.mode;
+  const activeSubmode = {
+    regular: lantern.state.intensity,
+    colorful: lantern.state.color,
+  }[lantern.state.mode];
 
-  // const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
+  const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
 
   // const redBlueFlickerColor = useRedBlueFlicker(
   //   modesCombo === "colorfulRedBlueFlicker"
@@ -42,17 +42,16 @@ export const Lantern = () => {
   //   lantern.state.isCharging
   // );
 
-  // const colorMap: Record<string, string> = {
-  //   regularLow: yellow[100],
-  //   regularMedium: yellow[300],
-  //   regularHigh: yellow[500],
-  //   colorfulRedStatic: red[500],
-  //   colorfulRedFlicker: redFlickerColor,
-  //   colorfulRedBlueFlicker: redBlueFlickerColor,
-  // };
+  const colorMap: Record<string, string> = {
+    regularLow: yellow[100],
+    regularMedium: yellow[300],
+    regularHigh: yellow[500],
+    colorfulRedStatic: red[500],
+    // colorfulRedFlicker: redFlickerColor,
+    // colorfulRedBlueFlicker: redBlueFlickerColor,
+  };
 
-  // const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
-  const color = lantern.state.isTurnedOn ? yellow[100] : "grey.50";
+  const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
 
   return (
     <Box
