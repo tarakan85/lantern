@@ -90,7 +90,11 @@ const showChargingIndicator$ = press$.pipe(
 const hideChargingIndicator$ = rx
   .merge(removeFromCharge$, showChargingIndicator$)
   .pipe(
-    rx.switchMap(() => rx.timer(3000)),
+    rx.withLatestFrom(state$),
+    rx.filter(([, state]) => !state.isCharging),
+    rx.switchMap(() => {
+      return rx.timer(3000).pipe(rx.takeUntil(putOnCharge$.pipe(rx.take(1))));
+    }),
     rx.map(events.hideChargingIndicator)
   );
 

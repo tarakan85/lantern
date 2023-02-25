@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { capitalizeFirst } from "~/utils/string";
+import { capitalize } from "~/utils/string";
 
 import { TContext } from "./lantern.machine";
 
@@ -22,5 +22,5 @@ export const selectSubMode = createSelector(
 export const selectResultMode = createSelector(
   selectMode,
   selectSubMode,
-  (mode, submode) => `${mode}${capitalizeFirst(submode)}` as const
+  (mode, submode) => `${mode}${capitalize(submode)}` as const
 );
