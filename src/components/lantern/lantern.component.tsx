@@ -94,32 +94,33 @@ export const Lantern = () => {
               flexDirection: "column",
               justifyContent: "flex-end",
             },
-            state.resultMode === "colorfulIridescent" && {
-              animationName: "backgroundColorPalette",
-              animationDuration: "8s",
-              animationIterationCount: "infinite",
-              animationDirection: "alternate",
-              "@keyframes backgroundColorPalette": {
-                "0%": {
-                  background: lightGreen["A700"],
-                },
-                "20%": {
-                  background: blue[500],
-                },
-                "40%": {
-                  background: purple[500],
-                },
-                "60%": {
-                  background: red[500],
-                },
-                "80%": {
-                  background: yellow[700],
-                },
-                "100%": {
-                  background: green[700],
+            state.resultMode === "colorfulIridescent" &&
+              state.isTurnedOn && {
+                animationName: "backgroundColorPalette",
+                animationDuration: "8s",
+                animationIterationCount: "infinite",
+                animationDirection: "alternate",
+                "@keyframes backgroundColorPalette": {
+                  "0%": {
+                    background: lightGreen["A700"],
+                  },
+                  "20%": {
+                    background: blue[500],
+                  },
+                  "40%": {
+                    background: purple[500],
+                  },
+                  "60%": {
+                    background: red[500],
+                  },
+                  "80%": {
+                    background: yellow[700],
+                  },
+                  "100%": {
+                    background: green[700],
+                  },
                 },
               },
-            },
           ]}
         >
           {state.showChargeIndicator && (

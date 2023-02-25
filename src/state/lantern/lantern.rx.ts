@@ -102,7 +102,7 @@ const showChargingIndicator$ = press$.pipe(
 const hideChargingIndicator$ = rx
   .merge(removeFromCharge$, showChargingIndicator$)
   .pipe(
-    rx.switchMap(() => rx.timer(2000)),
+    rx.switchMap(() => rx.timer(3000)),
     rx.map(lanternModel.events.hideChargingIndicator)
   );
 
