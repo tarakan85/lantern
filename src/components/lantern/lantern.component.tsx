@@ -76,9 +76,9 @@ export const Lantern = () => {
           onClick={() => actions.sendToggleCharger()}
         >
           {state.isCharging ? (
-            <PowerOffSharpIcon sx={{ color: "grey.600" }} />
+            <PowerOffSharpIcon sx={{ color: blue[600] }} />
           ) : (
-            <PowerSharpIcon sx={{ color: blue[600] }} />
+            <PowerSharpIcon sx={{ color: "grey.600" }} />
           )}
         </IconButton>
         <Box
