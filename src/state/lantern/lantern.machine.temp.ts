@@ -47,6 +47,9 @@ export const lanterMachine = lanternModel.createMachine({
       entry: lanternModel.assign({ isTurnedOn: false }),
       on: {
         togglePower: "turnedOn.modeHistory",
+        showChargingIndicator: {
+          actions: lanternModel.assign({ showChargeIndicator: true }),
+        },
       },
     },
     turnedOn: {
@@ -131,6 +134,12 @@ export const lanterMachine = lanternModel.createMachine({
           history: "deep",
         },
       },
+    },
+  },
+  on: {
+    hideChargingIndicator: {
+      actions: lanternModel.assign({ showChargeIndicator: false }),
+      cond: (ctx) => !ctx.isCharging,
     },
   },
 });

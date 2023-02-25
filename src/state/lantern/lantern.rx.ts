@@ -13,11 +13,10 @@ export const sendRelease = () => dispatch$.next(lanternModel.events.release());
 // state
 
 export const state$ = dispatch$.pipe(
+  rx.startWith(lanterMachine.initialState),
   rx.scan((state, transition) => {
     return lanterMachine.transition(state, transition as TEvents);
-  }, lanterMachine.initialState),
-  rx.filter((state) => state.changed === true),
-  rx.map((state) => state.context)
+  }, lanterMachine.initialState)
 );
 
 // obervable types
@@ -47,7 +46,8 @@ const togglePower$ = createLongPress(800).pipe(
 
 const switchSubmode$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => state.isTurnedOn),
+  rx.filter(([, state]) => state.context.isTurnedOn),
+  rx.tap((v) => console.log(1313, v)),
   rx.exhaustMap(() => {
     return rx
       .timer(300)
@@ -56,7 +56,10 @@ const switchSubmode$ = press$.pipe(
         rx.map(lanternModel.events.switchSubmode),
         rx.takeUntil(
           rx
-            .merge(state$.pipe(rx.filter((state) => state.isTurnedOn)), press$)
+            .merge(
+              state$.pipe(rx.filter((state) => state.context.isTurnedOn)),
+              press$
+            )
             .pipe(rx.take(1))
         )
       );
@@ -65,7 +68,7 @@ const switchSubmode$ = press$.pipe(
 
 const switchMode$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => state.isTurnedOn),
+  rx.filter(([, state]) => !state.context.isTurnedOn),
   rx.exhaustMap(() => {
     return rx.timer(300).pipe(
       rx.mergeMap(() => rx.EMPTY),
@@ -76,8 +79,24 @@ const switchMode$ = press$.pipe(
   })
 );
 
+const showChargingIndicator$ = press$.pipe(
+  rx.withLatestFrom(state$),
+  rx.filter(([, state]) => !state.context.isTurnedOn),
+  rx.switchMap(() => rx.timer(400).pipe(rx.raceWith(release$))),
+  rx.map(lanternModel.events.showChargingIndicator)
+);
+
+const hideChargingIndicator$ = showChargingIndicator$.pipe(
+  rx.switchMap(() => rx.timer(2000)),
+  rx.map(lanternModel.events.hideChargingIndicator)
+);
+
 // assemble effects
 
-rx.merge(togglePower$, switchSubmode$, switchMode$).subscribe((event) =>
-  dispatch$.next(event)
-);
+rx.merge(
+  togglePower$,
+  switchSubmode$,
+  switchMode$,
+  showChargingIndicator$,
+  hideChargingIndicator$
+).subscribe((event) => dispatch$.next(event));

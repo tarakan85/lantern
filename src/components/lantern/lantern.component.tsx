@@ -118,13 +118,14 @@ export const Lantern = () => {
             },
           ]}
         >
-          {/* {state.showChargeIndicator && (
+          {state.showChargeIndicator && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Box
                 sx={{
-                  bgcolor: state.isCharging
-                    ? chargingIndicatorFlickerColor
-                    : indigo[500],
+                  // bgcolor: state.isCharging
+                  //   ? chargingIndicatorFlickerColor
+                  //   : indigo[500],
+                  bgcolor: indigo[500],
                   borderRadius: "50%",
                   padding: "6px",
                   margin: "4px",
@@ -141,7 +142,7 @@ export const Lantern = () => {
                 />
               ))}
             </Box>
-          )} */}
+          )}
         </Box>
         <Box
           sx={{
