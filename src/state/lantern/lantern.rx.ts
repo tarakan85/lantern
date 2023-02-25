@@ -44,18 +44,11 @@ export const removeFromCharge$ = dispatch$.pipe(
   rx.filter((event) => event.type === "removeFromCharge")
 );
 
-// utils
-
-export const createLongPress = (time: number) => {
-  return press$.pipe(
-    rx.switchMap(() => rx.timer(time).pipe(rx.raceWith(release$))),
-    rx.filter((event) => event === 0)
-  );
-};
-
 // effects
 
-const togglePower$ = createLongPress(800).pipe(
+const togglePower$ = press$.pipe(
+  rx.switchMap(() => rx.timer(800).pipe(rx.raceWith(release$))),
+  rx.filter((event) => event === 0),
   rx.map(lanternModel.events.togglePower)
 );
 
