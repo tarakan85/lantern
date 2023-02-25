@@ -1,20 +1,19 @@
 import * as rx from "rxjs";
 
-import { lanternModel, lanterMachine, TEvents } from "./lantern.machine";
+import { events, lanterMachine, TEvents } from "./lantern.machine";
 
 const dispatch$ = new rx.Subject<TEvents>();
 
 // public actions
 
-export const sendPress = () => dispatch$.next(lanternModel.events.press());
+export const sendPress = () => dispatch$.next(events.press());
 
-export const sendRelease = () => dispatch$.next(lanternModel.events.release());
+export const sendRelease = () => dispatch$.next(events.release());
 
-export const sendPutOnCharge = () =>
-  dispatch$.next(lanternModel.events.putOnCharge());
+export const sendPutOnCharge = () => dispatch$.next(events.putOnCharge());
 
 export const sendRemoveFromCharge = () =>
-  dispatch$.next(lanternModel.events.removeFromCharge());
+  dispatch$.next(events.removeFromCharge());
 
 // state
 
@@ -49,7 +48,7 @@ export const removeFromCharge$ = dispatch$.pipe(
 const togglePower$ = press$.pipe(
   rx.switchMap(() => rx.timer(800).pipe(rx.raceWith(release$))),
   rx.filter((event) => event === 0),
-  rx.map(lanternModel.events.togglePower)
+  rx.map(events.togglePower)
 );
 
 const switchSubmode$ = press$.pipe(
@@ -60,7 +59,7 @@ const switchSubmode$ = press$.pipe(
       .timer(300)
       .pipe(
         rx.zipWith(release$.pipe(rx.take(1))),
-        rx.map(lanternModel.events.switchSubmode),
+        rx.map(events.switchSubmode),
         rx.takeUntil(
           rx
             .merge(state$.pipe(rx.filter((state) => state.isTurnedOn)), press$)
@@ -76,9 +75,7 @@ const switchMode$ = press$.pipe(
   rx.exhaustMap(() => {
     return rx.timer(300).pipe(
       rx.mergeMap(() => rx.EMPTY),
-      rx.raceWith(
-        press$.pipe(rx.take(1), rx.map(lanternModel.events.switchMode))
-      )
+      rx.raceWith(press$.pipe(rx.take(1), rx.map(events.switchMode)))
     );
   })
 );
@@ -87,14 +84,14 @@ const showChargingIndicator$ = press$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => !state.isTurnedOn),
   rx.switchMap(() => rx.timer(400).pipe(rx.raceWith(release$))),
-  rx.map(lanternModel.events.showChargingIndicator)
+  rx.map(events.showChargingIndicator)
 );
 
 const hideChargingIndicator$ = rx
   .merge(removeFromCharge$, showChargingIndicator$)
   .pipe(
     rx.switchMap(() => rx.timer(3000)),
-    rx.map(lanternModel.events.hideChargingIndicator)
+    rx.map(events.hideChargingIndicator)
   );
 
 // assemble effects

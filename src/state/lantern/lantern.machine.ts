@@ -33,6 +33,8 @@ export const lanternModel = createModel(
   }
 );
 
+export const events = lanternModel.events;
+
 export type TContext = ContextFrom<typeof lanternModel>;
 export type TEvents = EventFrom<typeof lanternModel>;
 
@@ -64,7 +66,6 @@ export const lanterMachine = lanternModel.createMachine({
           on: {
             switchMode: "colorful.colorHistory",
           },
-
           states: {
             low: {
               entry: lanternModel.assign({ intensity: "low" }),
