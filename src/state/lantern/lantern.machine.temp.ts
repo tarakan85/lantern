@@ -2,8 +2,6 @@ import { ContextFrom, EventFrom } from "xstate";
 import { createModel } from "xstate/lib/model";
 import * as rx from "rxjs";
 
-import * as lanternEvents from "./lantern.events";
-
 export type TModes = "regular" | "colorful";
 export type TIntensity = "low" | "medium" | "high";
 export type TColor =
@@ -30,6 +28,11 @@ export const lanternModel = createModel(
       hideChargingIndicator: () => ({}),
       putOnCharge: () => ({}),
       removeFromCharge: () => ({}),
+      press: () => ({}),
+      release: () => ({}),
+      longPress: () => ({}),
+      clickDelayed: () => ({}),
+      doubleClick: () => ({}),
     },
   }
 );
@@ -37,7 +40,7 @@ export const lanternModel = createModel(
 export type TContext = ContextFrom<typeof lanternModel>;
 export type TEvents = EventFrom<typeof lanternModel>;
 
-const lanterMachine = lanternModel.createMachine({
+export const lanterMachine = lanternModel.createMachine({
   predictableActionArguments: true,
   id: "app",
   context: lanternModel.initialContext,
@@ -134,12 +137,3 @@ const lanterMachine = lanternModel.createMachine({
     },
   },
 });
-
-export const state$ = lanternEvents.togglePower$.pipe(
-  rx.startWith(lanterMachine.initialState),
-  rx.scan((state, transition) => {
-    return lanterMachine.transition(state, transition as TEvents);
-  }, lanterMachine.initialState),
-  rx.filter((state) => state.changed === true),
-  rx.map((state) => state.context)
-);
