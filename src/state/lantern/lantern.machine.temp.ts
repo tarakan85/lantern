@@ -30,9 +30,6 @@ export const lanternModel = createModel(
       removeFromCharge: () => ({}),
       press: () => ({}),
       release: () => ({}),
-      longPress: () => ({}),
-      clickDelayed: () => ({}),
-      doubleClick: () => ({}),
     },
   }
 );

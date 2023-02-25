@@ -6,12 +6,6 @@ const dispatch$ = new rx.Subject<TEvents>();
 
 export const sendPress = () => dispatch$.next(lanternModel.events.press());
 export const sendRelease = () => dispatch$.next(lanternModel.events.release());
-export const sendTogglePower = () =>
-  dispatch$.next(lanternModel.events.togglePower());
-export const sendSwitchSubmode = () =>
-  dispatch$.next(lanternModel.events.switchSubmode());
-export const sendSwitchMode = () =>
-  dispatch$.next(lanternModel.events.switchMode());
 
 export const state$ = dispatch$.pipe(
   rx.startWith(lanterMachine.initialState),
@@ -31,18 +25,15 @@ export const release$ = dispatch$.pipe(
 
 export const createLongPress = (time: number) => {
   return press$.pipe(
-    rx.switchMap(() =>
-      rx
-        .timer(time)
-        .pipe(rx.map(lanternModel.events.longPress), rx.raceWith(release$))
-    ),
-    rx.filter((event) => event.type === "longPress")
+    rx.switchMap(() => rx.timer(time).pipe(rx.raceWith(release$))),
+    rx.filter((event) => event === 0)
   );
 };
 
 const togglePower$ = createLongPress(800).pipe(
   rx.map(lanternModel.events.togglePower)
 );
+
 const switchSubmode$ = dispatch$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => state.isTurnedOn),
@@ -61,6 +52,7 @@ const switchSubmode$ = dispatch$.pipe(
       );
   })
 );
+
 const switchMode$ = dispatch$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => state.isTurnedOn),
