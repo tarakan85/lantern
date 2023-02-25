@@ -40,7 +40,9 @@ export const createLongPress = (time: number) => {
   );
 };
 
-const togglePower$ = createLongPress(800).pipe(rx.tap(sendTogglePower));
+const togglePower$ = createLongPress(800).pipe(
+  rx.map(lanternModel.events.togglePower)
+);
 const switchSubmode$ = dispatch$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => state.isTurnedOn),
@@ -50,15 +52,14 @@ const switchSubmode$ = dispatch$.pipe(
       .timer(300)
       .pipe(
         rx.zipWith(release$.pipe(rx.take(1))),
-        rx.map(lanternModel.events.clickDelayed),
+        rx.map(lanternModel.events.switchSubmode),
         rx.takeUntil(
           rx
             .merge(state$.pipe(rx.filter((state) => state.isTurnedOn)), press$)
             .pipe(rx.take(1))
         )
       );
-  }),
-  rx.tap(sendSwitchSubmode)
+  })
 );
 const switchMode$ = dispatch$.pipe(
   rx.withLatestFrom(state$),
@@ -68,11 +69,12 @@ const switchMode$ = dispatch$.pipe(
     return rx.timer(300).pipe(
       rx.mergeMap(() => rx.EMPTY),
       rx.raceWith(
-        press$.pipe(rx.take(1), rx.map(lanternModel.events.doubleClick))
+        press$.pipe(rx.take(1), rx.map(lanternModel.events.switchMode))
       )
     );
-  }),
-  rx.tap(sendSwitchMode)
+  })
 );
 
-rx.merge(togglePower$, switchSubmode$, switchMode$).subscribe();
+rx.merge(togglePower$, switchSubmode$, switchMode$).subscribe((event) =>
+  dispatch$.next(event)
+);
