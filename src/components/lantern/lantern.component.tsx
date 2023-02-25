@@ -24,34 +24,35 @@ import { capitalizeFirst } from "~/utils/string";
 export const Lantern = () => {
   const lantern = useLantern();
 
-  const activeMode = lantern.state.mode;
-  const activeSubmode = {
-    regular: lantern.state.intensity,
-    colorful: lantern.state.color,
-  }[lantern.state.mode];
+  // const activeMode = lantern.state.mode;
+  // const activeSubmode = {
+  //   regular: lantern.state.intensity,
+  //   colorful: lantern.state.color,
+  // }[lantern.state.mode];
 
-  const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
+  // const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
 
-  const redBlueFlickerColor = useRedBlueFlicker(
-    modesCombo === "colorfulRedBlueFlicker"
-  );
+  // const redBlueFlickerColor = useRedBlueFlicker(
+  //   modesCombo === "colorfulRedBlueFlicker"
+  // );
 
-  const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
+  // const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
 
-  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
-    lantern.state.isCharging
-  );
+  // const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
+  //   lantern.state.isCharging
+  // );
 
-  const colorMap: Record<string, string> = {
-    regularLow: yellow[100],
-    regularMedium: yellow[300],
-    regularHigh: yellow[500],
-    colorfulRedStatic: red[500],
-    colorfulRedFlicker: redFlickerColor,
-    colorfulRedBlueFlicker: redBlueFlickerColor,
-  };
+  // const colorMap: Record<string, string> = {
+  //   regularLow: yellow[100],
+  //   regularMedium: yellow[300],
+  //   regularHigh: yellow[500],
+  //   colorfulRedStatic: red[500],
+  //   colorfulRedFlicker: redFlickerColor,
+  //   colorfulRedBlueFlicker: redBlueFlickerColor,
+  // };
 
-  const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
+  // const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
+  const color = lantern.state.isTurnedOn ? yellow[100] : "grey.50";
 
   return (
     <Box
@@ -71,7 +72,7 @@ export const Lantern = () => {
           position: "relative",
         }}
       >
-        <IconButton
+        {/* <IconButton
           sx={{
             border: "1px solid",
             borderColor: "grey.300",
@@ -87,7 +88,7 @@ export const Lantern = () => {
           ) : (
             <PowerSharpIcon sx={{ color: blue[600] }} />
           )}
-        </IconButton>
+        </IconButton> */}
         <Box
           sx={[
             {
@@ -101,35 +102,35 @@ export const Lantern = () => {
               flexDirection: "column",
               justifyContent: "flex-end",
             },
-            modesCombo === "colorfulIridescent" && {
-              animationName: "backgroundColorPalette",
-              animationDuration: "8s",
-              animationIterationCount: "infinite",
-              animationDirection: "alternate",
-              "@keyframes backgroundColorPalette": {
-                "0%": {
-                  background: lightGreen["A700"],
-                },
-                "20%": {
-                  background: blue[500],
-                },
-                "40%": {
-                  background: purple[500],
-                },
-                "60%": {
-                  background: red[500],
-                },
-                "80%": {
-                  background: yellow[700],
-                },
-                "100%": {
-                  background: green[700],
-                },
-              },
-            },
+            // modesCombo === "colorfulIridescent" && {
+            //   animationName: "backgroundColorPalette",
+            //   animationDuration: "8s",
+            //   animationIterationCount: "infinite",
+            //   animationDirection: "alternate",
+            //   "@keyframes backgroundColorPalette": {
+            //     "0%": {
+            //       background: lightGreen["A700"],
+            //     },
+            //     "20%": {
+            //       background: blue[500],
+            //     },
+            //     "40%": {
+            //       background: purple[500],
+            //     },
+            //     "60%": {
+            //       background: red[500],
+            //     },
+            //     "80%": {
+            //       background: yellow[700],
+            //     },
+            //     "100%": {
+            //       background: green[700],
+            //     },
+            //   },
+            // },
           ]}
         >
-          {lantern.state.showChargeIndicator && (
+          {/* {lantern.state.showChargeIndicator && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Box
                 sx={{
@@ -152,7 +153,7 @@ export const Lantern = () => {
                 />
               ))}
             </Box>
-          )}
+          )} */}
         </Box>
         <Box
           sx={{
