@@ -31,6 +31,10 @@ export const Lantern = () => {
     state.resultMode === "colorfulRedFlicker"
   );
 
+  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
+    state.isCharging
+  );
+
   const colorMap: Record<string, string> = {
     regularLow: yellow[100],
     regularMedium: yellow[300],
@@ -60,7 +64,7 @@ export const Lantern = () => {
           position: "relative",
         }}
       >
-        {/* <IconButton
+        <IconButton
           sx={{
             border: "1px solid",
             borderColor: "grey.300",
@@ -69,14 +73,14 @@ export const Lantern = () => {
             right: "-40px",
           }}
           size="small"
-          onClick={() => lantern.sendToggleCharger()}
+          onClick={() => actions.sendToggleCharger()}
         >
           {state.isCharging ? (
             <PowerOffSharpIcon sx={{ color: "grey.600" }} />
           ) : (
             <PowerSharpIcon sx={{ color: blue[600] }} />
           )}
-        </IconButton> */}
+        </IconButton>
         <Box
           sx={[
             {
@@ -122,10 +126,10 @@ export const Lantern = () => {
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Box
                 sx={{
-                  // bgcolor: state.isCharging
-                  //   ? chargingIndicatorFlickerColor
-                  //   : indigo[500],
-                  bgcolor: indigo[500],
+                  bgcolor: state.isCharging
+                    ? chargingIndicatorFlickerColor
+                    : indigo[500],
+
                   borderRadius: "50%",
                   padding: "6px",
                   margin: "4px",

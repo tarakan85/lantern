@@ -141,5 +141,14 @@ export const lanterMachine = lanternModel.createMachine({
       actions: lanternModel.assign({ showChargeIndicator: false }),
       cond: (ctx) => !ctx.isCharging,
     },
+    putOnCharge: {
+      actions: lanternModel.assign({
+        isCharging: true,
+        showChargeIndicator: true,
+      }),
+    },
+    removeFromCharge: {
+      actions: lanternModel.assign({ isCharging: false }),
+    },
   },
 });

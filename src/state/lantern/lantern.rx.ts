@@ -10,6 +10,12 @@ export const sendPress = () => dispatch$.next(lanternModel.events.press());
 
 export const sendRelease = () => dispatch$.next(lanternModel.events.release());
 
+export const sendPutOnCharge = () =>
+  dispatch$.next(lanternModel.events.putOnCharge());
+
+export const sendRemoveFromCharge = () =>
+  dispatch$.next(lanternModel.events.removeFromCharge());
+
 // state
 
 export const state$ = dispatch$.pipe(
@@ -27,6 +33,14 @@ export const press$ = dispatch$.pipe(
 
 export const release$ = dispatch$.pipe(
   rx.filter((event) => event.type === "release")
+);
+
+export const putOnCharge$ = dispatch$.pipe(
+  rx.filter((event) => event.type === "putOnCharge")
+);
+
+export const removeFromCharge$ = dispatch$.pipe(
+  rx.filter((event) => event.type === "removeFromCharge")
 );
 
 // utils
@@ -47,7 +61,6 @@ const togglePower$ = createLongPress(800).pipe(
 const switchSubmode$ = press$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => state.context.isTurnedOn),
-  rx.tap((v) => console.log(1313, v)),
   rx.exhaustMap(() => {
     return rx
       .timer(300)
@@ -68,7 +81,7 @@ const switchSubmode$ = press$.pipe(
 
 const switchMode$ = press$.pipe(
   rx.withLatestFrom(state$),
-  rx.filter(([, state]) => !state.context.isTurnedOn),
+  rx.filter(([, state]) => state.context.isTurnedOn),
   rx.exhaustMap(() => {
     return rx.timer(300).pipe(
       rx.mergeMap(() => rx.EMPTY),
@@ -86,10 +99,12 @@ const showChargingIndicator$ = press$.pipe(
   rx.map(lanternModel.events.showChargingIndicator)
 );
 
-const hideChargingIndicator$ = showChargingIndicator$.pipe(
-  rx.switchMap(() => rx.timer(2000)),
-  rx.map(lanternModel.events.hideChargingIndicator)
-);
+const hideChargingIndicator$ = rx
+  .merge(removeFromCharge$, showChargingIndicator$)
+  .pipe(
+    rx.switchMap(() => rx.timer(2000)),
+    rx.map(lanternModel.events.hideChargingIndicator)
+  );
 
 // assemble effects
 
