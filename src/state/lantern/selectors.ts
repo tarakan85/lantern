@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { capitalizeFirst } from "~/utils/string";
 
-import { TContext } from "./lantern.machine.temp";
+import { TContext } from "./lantern.machine";
 
 export const selectMode = (state: TContext) => state.mode;
 export const selectIntensity = (state: TContext) => state.intensity;

@@ -1,7 +1,6 @@
 import * as React from "react";
-import * as rx from "rxjs";
 
-import { lanterMachine } from "./lantern.machine.temp";
+import { lanterMachine } from "./lantern.machine";
 import {
   state$,
   sendPress,

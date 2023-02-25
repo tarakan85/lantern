@@ -1,6 +1,6 @@
 import * as rx from "rxjs";
 
-import { lanternModel, lanterMachine, TEvents } from "./lantern.machine.temp";
+import { lanternModel, lanterMachine, TEvents } from "./lantern.machine";
 
 const dispatch$ = new rx.Subject<TEvents>();
 
