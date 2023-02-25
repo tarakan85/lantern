@@ -13,7 +13,6 @@ export const sendRelease = () => dispatch$.next(lanternModel.events.release());
 // state
 
 export const state$ = dispatch$.pipe(
-  rx.startWith(lanterMachine.initialState),
   rx.scan((state, transition) => {
     return lanterMachine.transition(state, transition as TEvents);
   }, lanterMachine.initialState),

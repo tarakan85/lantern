@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { TContext, lanterMachine } from "./lantern.machine.temp";
+import { lanterMachine } from "./lantern.machine.temp";
 import { state$, sendPress, sendRelease } from "./lantern.rx";
 
 export const useLantern = () => {
@@ -12,10 +12,12 @@ export const useLantern = () => {
 
   return {
     state,
-    sendPress: sendPress,
-    sendRelease: sendRelease,
-    // sendToggleCharger: state.isCharging
-    //   ? lanternEvents.sendRemoveFromCharge
-    //   : lanternEvents.sendPutOnCharge,
+    actions: {
+      sendPress,
+      sendRelease,
+      // sendToggleCharger: state.isCharging
+      //   ? lanternEvents.sendRemoveFromCharge
+      //   : lanternEvents.sendPutOnCharge,
+    },
   };
 };

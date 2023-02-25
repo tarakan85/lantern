@@ -22,13 +22,13 @@ import { useLantern } from "~/state/lantern/lantern.hooks";
 import { capitalizeFirst } from "~/utils/string";
 
 export const Lantern = () => {
-  const lantern = useLantern();
+  const { state, actions } = useLantern();
 
-  const activeMode = lantern.state.mode;
+  const activeMode = state.mode;
   const activeSubmode = {
-    regular: lantern.state.intensity,
-    colorful: lantern.state.color,
-  }[lantern.state.mode];
+    regular: state.intensity,
+    colorful: state.color,
+  }[state.mode];
 
   const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
 
@@ -39,7 +39,7 @@ export const Lantern = () => {
   const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
 
   const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
-    lantern.state.isCharging
+    state.isCharging
   );
 
   const colorMap: Record<string, string> = {
@@ -51,7 +51,7 @@ export const Lantern = () => {
     colorfulRedBlueFlicker: redBlueFlickerColor,
   };
 
-  const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
+  const color = state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
 
   return (
     <Box
@@ -82,7 +82,7 @@ export const Lantern = () => {
           size="small"
           onClick={() => lantern.sendToggleCharger()}
         >
-          {lantern.state.isCharging ? (
+          {state.isCharging ? (
             <PowerOffSharpIcon sx={{ color: "grey.600" }} />
           ) : (
             <PowerSharpIcon sx={{ color: blue[600] }} />
@@ -129,11 +129,11 @@ export const Lantern = () => {
             },
           ]}
         >
-          {/* {lantern.state.showChargeIndicator && (
+          {/* {state.showChargeIndicator && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Box
                 sx={{
-                  bgcolor: lantern.state.isCharging
+                  bgcolor: state.isCharging
                     ? chargingIndicatorFlickerColor
                     : indigo[500],
                   borderRadius: "50%",
@@ -166,8 +166,8 @@ export const Lantern = () => {
           <IconButton
             sx={{ bgcolor: "grey.300" }}
             size="large"
-            onMouseDown={lantern.sendPress}
-            onMouseUp={lantern.sendRelease}
+            onMouseDown={actions.sendPress}
+            onMouseUp={actions.sendRelease}
           >
             <PowerSettingsNewSharpIcon />
           </IconButton>
