@@ -19,27 +19,16 @@ import {
   useChargingIndicatorFlicker,
 } from "./hooks";
 import { useLantern } from "~/state/lantern/lantern.hooks";
-import { capitalizeFirst } from "~/utils/string";
 
 export const Lantern = () => {
   const { state, actions } = useLantern();
 
-  const activeMode = state.mode;
-  const activeSubmode = {
-    regular: state.intensity,
-    colorful: state.color,
-  }[state.mode];
-
-  const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
-
   const redBlueFlickerColor = useRedBlueFlicker(
-    modesCombo === "colorfulRedBlueFlicker"
+    state.resultMode === "colorfulRedBlueFlicker"
   );
 
-  const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
-
-  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
-    state.isCharging
+  const redFlickerColor = useRedFlicker(
+    state.resultMode === "colorfulRedFlicker"
   );
 
   const colorMap: Record<string, string> = {
@@ -51,7 +40,7 @@ export const Lantern = () => {
     colorfulRedBlueFlicker: redBlueFlickerColor,
   };
 
-  const color = state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
+  const color = state.isTurnedOn ? colorMap[state.resultMode] : "grey.50";
 
   return (
     <Box
@@ -101,7 +90,7 @@ export const Lantern = () => {
               flexDirection: "column",
               justifyContent: "flex-end",
             },
-            modesCombo === "colorfulIridescent" && {
+            state.resultMode === "colorfulIridescent" && {
               animationName: "backgroundColorPalette",
               animationDuration: "8s",
               animationIterationCount: "infinite",

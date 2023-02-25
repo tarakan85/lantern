@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { lanterMachine } from "./lantern.machine.temp";
 import { state$, sendPress, sendRelease } from "./lantern.rx";
+import * as selectors from "./selectors";
 
 export const useLantern = () => {
   const [state, setState] = React.useState(lanterMachine.initialState.context);
@@ -11,7 +12,7 @@ export const useLantern = () => {
   }, []);
 
   return {
-    state,
+    state: { ...state, resultMode: selectors.selectResultMode(state) },
     actions: {
       sendPress,
       sendRelease,
