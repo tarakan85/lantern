@@ -136,8 +136,9 @@ export const Lantern = () => {
                   margin: "4px",
                 }}
               />
-              {range(3).map(() => (
+              {range(3).map((index) => (
                 <Box
+                  key={index}
                   sx={{
                     bgcolor: indigo[500],
                     borderRadius: "50%",
