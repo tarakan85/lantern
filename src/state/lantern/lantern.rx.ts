@@ -8,8 +8,10 @@ export const sendPress = () => dispatch$.next(lanternModel.events.press());
 export const sendRelease = () => dispatch$.next(lanternModel.events.release());
 export const sendTogglePower = () =>
   dispatch$.next(lanternModel.events.togglePower());
-export const sendSwitchSubMode = () =>
+export const sendSwitchSubmode = () =>
   dispatch$.next(lanternModel.events.switchSubmode());
+export const sendSwitchMode = () =>
+  dispatch$.next(lanternModel.events.switchMode());
 
 export const state$ = dispatch$.pipe(
   rx.startWith(lanterMachine.initialState),
@@ -25,17 +27,6 @@ export const press$ = dispatch$.pipe(
 );
 export const release$ = dispatch$.pipe(
   rx.filter((event) => event.type === "release")
-);
-
-export const doubleClick$ = press$.pipe(
-  rx.exhaustMap(() =>
-    rx.timer(300).pipe(
-      rx.mergeMap(() => rx.EMPTY),
-      rx.raceWith(
-        press$.pipe(rx.take(1), rx.map(lanternModel.events.doubleClick))
-      )
-    )
-  )
 );
 
 export const createLongPress = (time: number) => {
@@ -54,19 +45,34 @@ const switchSubmode$ = dispatch$.pipe(
   rx.withLatestFrom(state$),
   rx.filter(([, state]) => state.isTurnedOn),
   rx.filter(([event]) => event.type === "press"),
-  rx.switchMap(() => {
-    return rx.timer(300).pipe(
-      rx.zipWith(release$.pipe(rx.take(1))),
-      rx.map(lanternModel.events.clickDelayed),
-      rx.takeUntil(
-        state$.pipe(
-          rx.filter((state) => state.isTurnedOn),
-          rx.take(1)
+  rx.exhaustMap(() => {
+    return rx
+      .timer(300)
+      .pipe(
+        rx.zipWith(release$.pipe(rx.take(1))),
+        rx.map(lanternModel.events.clickDelayed),
+        rx.takeUntil(
+          rx
+            .merge(state$.pipe(rx.filter((state) => state.isTurnedOn)), press$)
+            .pipe(rx.take(1))
         )
+      );
+  }),
+  rx.tap(sendSwitchSubmode)
+);
+const switchMode$ = dispatch$.pipe(
+  rx.withLatestFrom(state$),
+  rx.filter(([, state]) => state.isTurnedOn),
+  rx.filter(([event]) => event.type === "press"),
+  rx.exhaustMap(() => {
+    return rx.timer(300).pipe(
+      rx.mergeMap(() => rx.EMPTY),
+      rx.raceWith(
+        press$.pipe(rx.take(1), rx.map(lanternModel.events.doubleClick))
       )
     );
   }),
-  rx.tap(sendSwitchSubMode)
+  rx.tap(sendSwitchMode)
 );
 
-rx.merge(togglePower$, switchSubmode$).subscribe();
+rx.merge(togglePower$, switchSubmode$, switchMode$).subscribe();

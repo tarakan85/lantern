@@ -32,23 +32,23 @@ export const Lantern = () => {
 
   const modesCombo = activeMode.concat(capitalizeFirst(activeSubmode));
 
-  // const redBlueFlickerColor = useRedBlueFlicker(
-  //   modesCombo === "colorfulRedBlueFlicker"
-  // );
+  const redBlueFlickerColor = useRedBlueFlicker(
+    modesCombo === "colorfulRedBlueFlicker"
+  );
 
-  // const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
+  const redFlickerColor = useRedFlicker(modesCombo === "colorfulRedFlicker");
 
-  // const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
-  //   lantern.state.isCharging
-  // );
+  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
+    lantern.state.isCharging
+  );
 
   const colorMap: Record<string, string> = {
     regularLow: yellow[100],
     regularMedium: yellow[300],
     regularHigh: yellow[500],
     colorfulRedStatic: red[500],
-    // colorfulRedFlicker: redFlickerColor,
-    // colorfulRedBlueFlicker: redBlueFlickerColor,
+    colorfulRedFlicker: redFlickerColor,
+    colorfulRedBlueFlicker: redBlueFlickerColor,
   };
 
   const color = lantern.state.isTurnedOn ? colorMap[modesCombo] : "grey.50";
@@ -101,32 +101,32 @@ export const Lantern = () => {
               flexDirection: "column",
               justifyContent: "flex-end",
             },
-            // modesCombo === "colorfulIridescent" && {
-            //   animationName: "backgroundColorPalette",
-            //   animationDuration: "8s",
-            //   animationIterationCount: "infinite",
-            //   animationDirection: "alternate",
-            //   "@keyframes backgroundColorPalette": {
-            //     "0%": {
-            //       background: lightGreen["A700"],
-            //     },
-            //     "20%": {
-            //       background: blue[500],
-            //     },
-            //     "40%": {
-            //       background: purple[500],
-            //     },
-            //     "60%": {
-            //       background: red[500],
-            //     },
-            //     "80%": {
-            //       background: yellow[700],
-            //     },
-            //     "100%": {
-            //       background: green[700],
-            //     },
-            //   },
-            // },
+            modesCombo === "colorfulIridescent" && {
+              animationName: "backgroundColorPalette",
+              animationDuration: "8s",
+              animationIterationCount: "infinite",
+              animationDirection: "alternate",
+              "@keyframes backgroundColorPalette": {
+                "0%": {
+                  background: lightGreen["A700"],
+                },
+                "20%": {
+                  background: blue[500],
+                },
+                "40%": {
+                  background: purple[500],
+                },
+                "60%": {
+                  background: red[500],
+                },
+                "80%": {
+                  background: yellow[700],
+                },
+                "100%": {
+                  background: green[700],
+                },
+              },
+            },
           ]}
         >
           {/* {lantern.state.showChargeIndicator && (
