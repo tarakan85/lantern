@@ -54,3 +54,33 @@ export const switchMode: TEpic = (action$, state$) =>
       );
     })
   );
+
+export const showChargingIndicator: TEpic = (action$, state$) =>
+  action$.pipe(
+    ofType(actions.press.type),
+    rx.withLatestFrom(state$),
+    rx.filter(([, state]) => !state.lantern.isTurnedOn),
+    rx.switchMap(() =>
+      rx
+        .timer(400)
+        .pipe(rx.raceWith(action$.pipe(ofType(actions.release.type))))
+    ),
+    rx.map(() => actions.showChargingIndicator())
+  );
+
+export const hideChargingIndicator: TEpic = (action$, state$) =>
+  action$.pipe(
+    ofType(actions.removeFromCharge.type, actions.showChargingIndicator.type),
+    rx.withLatestFrom(state$),
+    rx.filter(([, state]) => !state.lantern.isCharging),
+    rx.switchMap(() => {
+      return rx
+        .timer(2000)
+        .pipe(
+          rx.takeUntil(
+            action$.pipe(ofType(actions.putOnCharge.type), rx.take(1))
+          )
+        );
+    }),
+    rx.map(() => actions.hideChargingIndicator())
+  );

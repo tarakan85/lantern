@@ -9,5 +9,7 @@ export type TEpic = Epic<AnyAction, AnyAction, TRootState>;
 export const epic = combineEpics(
   lanternEpics.togglePower,
   lanternEpics.switchSubmode,
-  lanternEpics.switchMode
+  lanternEpics.switchMode,
+  lanternEpics.showChargingIndicator,
+  lanternEpics.hideChargingIndicator
 );

@@ -64,6 +64,25 @@ const slice = createSlice({
     switchMode(state) {
       state.modeIndex = nextIndex(state.modeIndex, state.modes);
     },
+
+    showChargingIndicator(state) {
+      state.showChargeIndicator = true;
+    },
+
+    hideChargingIndicator(state) {
+      if (!state.isCharging) {
+        state.showChargeIndicator = false;
+      }
+    },
+
+    putOnCharge(state) {
+      state.isCharging = true;
+      state.showChargeIndicator = true;
+    },
+
+    removeFromCharge(state) {
+      state.isCharging = false;
+    },
   },
 });
 
