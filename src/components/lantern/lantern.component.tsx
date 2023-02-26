@@ -73,7 +73,7 @@ export const Lantern = () => {
             right: "-40px",
           }}
           size="small"
-          onClick={() => actions.sendToggleCharger()}
+          onClick={() => actions.toggleCharger()}
         >
           {state.isCharging ? (
             <PowerOffSharpIcon sx={{ color: blue[600] }} />
@@ -162,8 +162,8 @@ export const Lantern = () => {
           <IconButton
             sx={{ bgcolor: "grey.300" }}
             size="large"
-            onMouseDown={actions.sendPress}
-            onMouseUp={actions.sendRelease}
+            onMouseDown={actions.press}
+            onMouseUp={actions.release}
           >
             <PowerSettingsNewSharpIcon />
           </IconButton>

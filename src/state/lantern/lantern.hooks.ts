@@ -18,9 +18,9 @@ export const useLantern = () => {
   return {
     state: { ...state, resultMode },
     actions: {
-      sendPress: () => dispatch(actions.press()),
-      sendRelease: () => dispatch(actions.release()),
-      sendToggleCharger: () =>
+      press: () => dispatch(actions.press()),
+      release: () => dispatch(actions.release()),
+      toggleCharger: () =>
         dispatch(
           state.isCharging ? actions.removeFromCharge() : actions.putOnCharge()
         ),
