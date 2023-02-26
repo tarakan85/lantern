@@ -1,7 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
+
 import { TAppDispatch, TRootState } from "~/state/root/root.types";
 
-import * as selectors from "./selectors";
+import * as selectors from "./lantern.selectors";
 import { actions, TLanternState } from "./lantern.slice";
 
 export const useLantern = () => {
