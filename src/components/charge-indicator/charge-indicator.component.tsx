@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 
 import { useChargingIndicatorFlicker } from "./charge-indicator.hooks";
+import { COLORS } from "./charge-indicator.constants";
 
 export type TChargingIndicatorProps = {
   isVisible: boolean;
@@ -15,6 +16,11 @@ export const ChargeIndicator: React.FC<TChargingIndicatorProps> = ({
 }) => {
   const flickeringColor = useChargingIndicatorFlicker(isOnCharge);
 
+  const flickeringResultColor = {
+    [COLORS.NONE]: "transparent",
+    [COLORS.BLUE]: "chargeIndicator",
+  }[flickeringColor];
+
   return (
     <Box
       sx={[
@@ -24,7 +30,7 @@ export const ChargeIndicator: React.FC<TChargingIndicatorProps> = ({
     >
       <Box
         sx={{
-          bgcolor: isOnCharge ? flickeringColor : indigo[500],
+          bgcolor: isOnCharge ? flickeringResultColor : "chargeIndicator",
 
           borderRadius: "50%",
           padding: "6px",

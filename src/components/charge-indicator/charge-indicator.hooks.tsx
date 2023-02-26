@@ -1,17 +1,18 @@
 import * as React from "react";
-import { indigo } from "@mui/material/colors";
 
 import { createPausableEventsSequence } from "~/utils/rx";
 
-type TFlicker = typeof indigo[500] | "transparent";
+import { COLORS } from "./charge-indicator.constants";
+
+type TFlicker = COLORS.BLUE | COLORS.NONE;
 
 const flickerSeq = createPausableEventsSequence<TFlicker>([
-  { value: indigo[500], duration: 500 },
-  { value: "transparent" as const, duration: 500 },
+  { value: COLORS.BLUE, duration: 500 },
+  { value: COLORS.NONE, duration: 500 },
 ]);
 
 export const useChargingIndicatorFlicker = (doFlicker: boolean) => {
-  const [color, setColor] = React.useState<TFlicker>("transparent");
+  const [color, setColor] = React.useState<TFlicker>(COLORS.NONE);
 
   React.useEffect(() => {
     const subscription = flickerSeq.subscribe((event) => setColor(event.value));

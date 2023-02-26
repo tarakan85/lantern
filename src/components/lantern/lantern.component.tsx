@@ -15,28 +15,38 @@ import { useLantern } from "~/state/lantern/lantern.hooks";
 import { ChargeIndicator } from "~/components/charge-indicator/charge-indicator.component";
 
 import { useRedBlueFlicker, useRedFlicker } from "./lantern.hooks";
+import { COLORS } from "./lantern.constants";
 
 export const Lantern = () => {
   const { state, actions } = useLantern();
 
   const redBlueFlickerColor = useRedBlueFlicker(
-    state.resultMode === "colorfulRedBlueFlicker"
+    state.isTurnedOn && state.resultMode === "colorfulRedBlueFlicker"
   );
 
   const redFlickerColor = useRedFlicker(
-    state.resultMode === "colorfulRedFlicker"
+    state.isTurnedOn && state.resultMode === "colorfulRedFlicker"
   );
 
   const colorMap: Record<string, string> = {
-    regularLow: yellow[100],
-    regularMedium: yellow[300],
-    regularHigh: yellow[500],
-    colorfulRedStatic: red[500],
-    colorfulRedFlicker: redFlickerColor,
-    colorfulRedBlueFlicker: redBlueFlickerColor,
+    regularLow: "intensity.low",
+    regularMedium: "intensity.medium",
+    regularHigh: "intensity.high",
+    colorfulRedStatic: "colors.red",
+
+    colorfulRedFlicker: {
+      [COLORS.NONE]: "turnedOff",
+      [COLORS.RED]: "colors.red",
+    }[redFlickerColor],
+
+    colorfulRedBlueFlicker: {
+      [COLORS.NONE]: "turnedOff",
+      [COLORS.RED]: "colors.red",
+      [COLORS.BLUE]: "colors.blue",
+    }[redBlueFlickerColor],
   };
 
-  const color = state.isTurnedOn ? colorMap[state.resultMode] : "grey.50";
+  const color = state.isTurnedOn ? colorMap[state.resultMode] : "turnedOff";
 
   return (
     <Box
