@@ -1,5 +1,5 @@
 import * as rx from "rxjs";
-import { ofType } from "redux-observable";
+import { ofType, combineEpics } from "redux-observable";
 
 import { TEpic } from "~/state/root/root.types";
 
@@ -84,3 +84,11 @@ export const hideChargingIndicator: TEpic = (action$, state$) =>
     }),
     rx.map(() => actions.hideChargingIndicator())
   );
+
+export const epic = combineEpics(
+  togglePower,
+  switchSubmode,
+  switchMode,
+  showChargingIndicator,
+  hideChargingIndicator
+);
