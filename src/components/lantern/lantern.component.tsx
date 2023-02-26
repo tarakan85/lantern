@@ -1,4 +1,3 @@
-import range from "lodash/range";
 import { Box, IconButton } from "@mui/material";
 import PowerSettingsNewSharpIcon from "@mui/icons-material/PowerSettingsNewSharp";
 import PowerSharpIcon from "@mui/icons-material/PowerSharp";
@@ -10,15 +9,12 @@ import {
   blue,
   purple,
   green,
-  indigo,
 } from "@mui/material/colors";
 
-import {
-  useRedBlueFlicker,
-  useRedFlicker,
-  useChargingIndicatorFlicker,
-} from "./hooks";
 import { useLantern } from "~/state/lantern/lantern.hooks";
+import { ChargeIndicator } from "~/components/charge-indicator/charge-indicator.component";
+
+import { useRedBlueFlicker, useRedFlicker } from "./hooks";
 
 export const Lantern = () => {
   const { state, actions } = useLantern();
@@ -29,10 +25,6 @@ export const Lantern = () => {
 
   const redFlickerColor = useRedFlicker(
     state.resultMode === "colorfulRedFlicker"
-  );
-
-  const chargingIndicatorFlickerColor = useChargingIndicatorFlicker(
-    state.isCharging
   );
 
   const colorMap: Record<string, string> = {
@@ -123,32 +115,10 @@ export const Lantern = () => {
               },
           ]}
         >
-          {state.showChargeIndicator && (
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <Box
-                sx={{
-                  bgcolor: state.isCharging
-                    ? chargingIndicatorFlickerColor
-                    : indigo[500],
-
-                  borderRadius: "50%",
-                  padding: "6px",
-                  margin: "4px",
-                }}
-              />
-              {range(3).map((index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    bgcolor: indigo[500],
-                    borderRadius: "50%",
-                    padding: "6px",
-                    margin: "4px",
-                  }}
-                />
-              ))}
-            </Box>
-          )}
+          <ChargeIndicator
+            isVisible={state.showChargeIndicator}
+            isOnCharge={state.isCharging}
+          />
         </Box>
         <Box
           sx={{
