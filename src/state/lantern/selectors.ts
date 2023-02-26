@@ -24,3 +24,5 @@ export const selectResultMode = createSelector(
   selectSubMode,
   (mode, submode) => `${mode}${capitalize(submode)}` as const
 );
+
+export type TResultMode = ReturnType<typeof selectResultMode>;

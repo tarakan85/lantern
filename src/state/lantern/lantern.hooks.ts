@@ -1,30 +1,25 @@
-import * as React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { TAppDispatch, TRootState } from "~/state/root/root.types";
 
-import { lanterMachine } from "./lantern.machine";
-import {
-  state$,
-  sendPress,
-  sendRelease,
-  sendRemoveFromCharge,
-  sendPutOnCharge,
-} from "./lantern.rx";
 import * as selectors from "./selectors";
+import * as slice from "./lantern.slice";
 
 export const useLantern = () => {
-  const [state, setState] = React.useState(lanterMachine.initialState.context);
-  React.useEffect(() => {
-    const subscription = state$.subscribe(setState);
-    return () => subscription.unsubscribe();
-  }, []);
+  const dispatch: TAppDispatch = useDispatch();
+  const state = useSelector<TRootState, slice.TState>((state) => state.lantern);
+  const resultMode = useSelector<TRootState, selectors.TResultMode>((state) =>
+    selectors.selectResultMode(state.lantern)
+  );
 
   return {
-    state: { ...state, resultMode: selectors.selectResultMode(state) },
+    state: { ...state, resultMode },
     actions: {
-      sendPress,
-      sendRelease,
-      sendToggleCharger: state.isCharging
-        ? sendRemoveFromCharge
-        : sendPutOnCharge,
+      sendPress: () => dispatch(slice.actions.press()),
+      sendRelease: () => dispatch(slice.actions.release()),
+      sendToggleCharger: () => {},
+      // sendToggleCharger: state.isCharging
+      //   ? sendRemoveFromCharge
+      //   : sendPutOnCharge,
     },
   };
 };
