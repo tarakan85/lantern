@@ -10,6 +10,7 @@ import {
   purple,
   green,
 } from "@mui/material/colors";
+import { isMobile } from "react-device-detect";
 
 import { useLantern } from "~/state/lantern/lantern.hooks";
 import { ChargeIndicator } from "~/components/charge-indicator/charge-indicator.component";
@@ -142,10 +143,9 @@ export const Lantern = () => {
           <IconButton
             sx={{ bgcolor: "grey.300" }}
             size="large"
-            onMouseDown={actions.press}
-            onMouseUp={actions.release}
-            // onTouchStart={actions.press}
-            // onTouchEnd={actions.release}
+            {...(isMobile
+              ? { onTouchStart: actions.press, onTouchEnd: actions.release }
+              : { onMouseDown: actions.press, onMouseUp: actions.release })}
           >
             <PowerSettingsNewSharpIcon />
           </IconButton>

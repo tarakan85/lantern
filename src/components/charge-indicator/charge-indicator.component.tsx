@@ -1,6 +1,5 @@
 import range from "lodash/range";
 import { Box } from "@mui/material";
-import { indigo } from "@mui/material/colors";
 
 import { useChargingIndicatorFlicker } from "./charge-indicator.hooks";
 import { COLORS } from "./charge-indicator.constants";
@@ -31,7 +30,6 @@ export const ChargeIndicator: React.FC<TChargingIndicatorProps> = ({
       <Box
         sx={{
           bgcolor: isOnCharge ? flickeringResultColor : "chargeIndicator",
-
           borderRadius: "50%",
           padding: "6px",
           margin: "4px",
@@ -41,7 +39,7 @@ export const ChargeIndicator: React.FC<TChargingIndicatorProps> = ({
         <Box
           key={index}
           sx={{
-            bgcolor: indigo[500],
+            bgcolor: "chargeIndicator",
             borderRadius: "50%",
             padding: "6px",
             margin: "4px",
