@@ -14,7 +14,7 @@ import {
 import { useLantern } from "~/state/lantern/lantern.hooks";
 import { ChargeIndicator } from "~/components/charge-indicator/charge-indicator.component";
 
-import { useRedBlueFlicker, useRedFlicker } from "./hooks";
+import { useRedBlueFlicker, useRedFlicker } from "./lantern.hooks";
 
 export const Lantern = () => {
   const { state, actions } = useLantern();
