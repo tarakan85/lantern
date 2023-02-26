@@ -144,6 +144,8 @@ export const Lantern = () => {
             size="large"
             onMouseDown={actions.press}
             onMouseUp={actions.release}
+            // onTouchStart={actions.press}
+            // onTouchEnd={actions.release}
           >
             <PowerSettingsNewSharpIcon />
           </IconButton>
