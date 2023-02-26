@@ -2,26 +2,29 @@ import * as rx from "rxjs";
 import { ofType, combineEpics } from "redux-observable";
 
 import { TEpic } from "~/state/root/root.types";
+import * as TIME from "~/constants/time";
 
 import { actions } from "./lantern.slice";
 
-export const togglePower: TEpic = (action$) =>
+const togglePower: TEpic = (action$) =>
   action$.pipe(
     ofType(actions.press.type),
     rx.switchMap(() =>
-      rx.timer(800).pipe(rx.raceWith(action$.pipe(ofType(actions.release))))
+      rx
+        .timer(TIME.TURN_ON_THRESHOLD)
+        .pipe(rx.raceWith(action$.pipe(ofType(actions.release))))
     ),
     rx.filter((event) => event === 0),
     rx.map(() => actions.togglePower())
   );
 
-export const switchSubmode: TEpic = (action$, state$) =>
+const switchSubmode: TEpic = (action$, state$) =>
   action$.pipe(
     ofType(actions.press.type),
     rx.withLatestFrom(state$),
     rx.filter(([, state]) => state.lantern.isTurnedOn),
     rx.exhaustMap(() => {
-      return rx.timer(300).pipe(
+      return rx.timer(TIME.DOUBLE_PRESS_THRESHOLD).pipe(
         rx.zipWith(action$.pipe(ofType(actions.release.type))),
         rx.map(() => actions.switchSubmode()),
         rx.takeUntil(
@@ -36,13 +39,13 @@ export const switchSubmode: TEpic = (action$, state$) =>
     })
   );
 
-export const switchMode: TEpic = (action$, state$) =>
+const switchMode: TEpic = (action$, state$) =>
   action$.pipe(
     ofType(actions.press.type),
     rx.withLatestFrom(state$),
     rx.filter(([, state]) => state.lantern.isTurnedOn),
     rx.exhaustMap(() => {
-      return rx.timer(300).pipe(
+      return rx.timer(TIME.DOUBLE_PRESS_THRESHOLD).pipe(
         rx.mergeMap(() => rx.EMPTY),
         rx.raceWith(
           action$.pipe(
@@ -55,27 +58,27 @@ export const switchMode: TEpic = (action$, state$) =>
     })
   );
 
-export const showChargingIndicator: TEpic = (action$, state$) =>
+const showChargingIndicator: TEpic = (action$, state$) =>
   action$.pipe(
     ofType(actions.press.type),
     rx.withLatestFrom(state$),
     rx.filter(([, state]) => !state.lantern.isTurnedOn),
     rx.switchMap(() =>
       rx
-        .timer(400)
+        .timer(TIME.SHOW_CHARGE_INDICATOR_FROM_PRESS_THRESHOLD)
         .pipe(rx.raceWith(action$.pipe(ofType(actions.release.type))))
     ),
     rx.map(() => actions.showChargingIndicator())
   );
 
-export const hideChargingIndicator: TEpic = (action$, state$) =>
+const hideChargingIndicator: TEpic = (action$, state$) =>
   action$.pipe(
     ofType(actions.removeFromCharge.type, actions.showChargingIndicator.type),
     rx.withLatestFrom(state$),
     rx.filter(([, state]) => !state.lantern.isCharging),
     rx.switchMap(() => {
       return rx
-        .timer(2000)
+        .timer(TIME.CHARGE_INDICATOR_AUTO_SHUTDOWN_TIMER)
         .pipe(
           rx.takeUntil(
             action$.pipe(ofType(actions.putOnCharge.type), rx.take(1))
