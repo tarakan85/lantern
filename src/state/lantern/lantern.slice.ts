@@ -1,5 +1,7 @@
 import { createSlice, createAction } from "@reduxjs/toolkit";
 
+import { nextIndex } from "~/utils/array";
+
 export type TModes = "regular" | "colorful";
 export type TIntensity = "low" | "medium" | "high";
 export type TColor =
@@ -8,20 +10,34 @@ export type TColor =
   | "redFlicker"
   | "redBlueFlicker";
 
-export type TState = {
+export type TLanternState = {
   isTurnedOn: boolean;
-  mode: TModes;
-  intensity: TIntensity;
-  color: TColor;
+  modes: TModes[];
+  modeIndex: number;
+  submodes: {
+    regular: TIntensity[];
+    colorful: TColor[];
+  };
+  submodeIndexes: {
+    regular: number;
+    colorful: number;
+  };
   showChargeIndicator: boolean;
   isCharging: boolean;
 };
 
-export const initialState: TState = {
+export const initialState: TLanternState = {
   isTurnedOn: false,
-  mode: "regular" as TModes,
-  intensity: "low" as TIntensity,
-  color: "redStatic" as TColor,
+  modes: ["regular", "colorful"],
+  modeIndex: 0,
+  submodes: {
+    regular: ["low", "medium", "high"],
+    colorful: ["iridescent", "redStatic", "redFlicker", "redBlueFlicker"],
+  },
+  submodeIndexes: {
+    regular: 0,
+    colorful: 0,
+  },
   showChargeIndicator: false,
   isCharging: false,
 };
@@ -32,6 +48,21 @@ const slice = createSlice({
   reducers: {
     togglePower(state) {
       state.isTurnedOn = !state.isTurnedOn;
+    },
+
+    switchSubmode(state) {
+      const currentMode = state.modes[state.modeIndex];
+      const currentSubmodeIndex = state.submodeIndexes[currentMode];
+      const currentSubmodes = state.submodes[currentMode];
+
+      state.submodeIndexes[currentMode] = nextIndex(
+        currentSubmodeIndex,
+        currentSubmodes
+      );
+    },
+
+    switchMode(state) {
+      state.modeIndex = nextIndex(state.modeIndex, state.modes);
     },
   },
 });

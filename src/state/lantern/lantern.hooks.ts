@@ -6,9 +6,11 @@ import * as slice from "./lantern.slice";
 
 export const useLantern = () => {
   const dispatch: TAppDispatch = useDispatch();
-  const state = useSelector<TRootState, slice.TState>((state) => state.lantern);
-  const resultMode = useSelector<TRootState, selectors.TResultMode>((state) =>
-    selectors.selectResultMode(state.lantern)
+  const state = useSelector<TRootState, slice.TLanternState>(
+    (state) => state.lantern
+  );
+  const resultMode = useSelector<TRootState, selectors.TResultMode>(
+    selectors.selectResultMode
   );
 
   return {

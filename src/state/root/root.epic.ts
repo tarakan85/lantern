@@ -6,4 +6,8 @@ import * as lanternEpics from "~/state/lantern/lantern.epics";
 
 export type TEpic = Epic<AnyAction, AnyAction, TRootState>;
 
-export const epic = combineEpics(lanternEpics.togglePower);
+export const epic = combineEpics(
+  lanternEpics.togglePower,
+  lanternEpics.switchSubmode,
+  lanternEpics.switchMode
+);
