@@ -3,16 +3,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { TAppDispatch, TRootState } from "~/state/root/root.types";
 
 import * as selectors from "./lantern.selectors";
-import { actions, TLanternState } from "./lantern.slice";
+import { actions } from "./lantern.slice";
+import * as types from "./lantern.types";
 
 export const useLantern = () => {
   const dispatch: TAppDispatch = useDispatch();
 
-  const state = useSelector<TRootState, TLanternState>(
-    (state) => state.lantern
-  );
+  const state = useSelector<TRootState, types.TState>((state) => state.lantern);
 
-  const resultMode = useSelector<TRootState, selectors.TResultMode>(
+  const resultMode = useSelector<TRootState, types.TResultMode>(
     selectors.selectResultMode
   );
 

@@ -1,32 +1,9 @@
 import { createSlice, createAction } from "@reduxjs/toolkit";
 
+import * as types from "./lantern.types";
 import { nextIndex } from "~/utils/array";
 
-export type TModes = "regular" | "colorful";
-export type TIntensity = "low" | "medium" | "high";
-export type TColor =
-  | "iridescent"
-  | "redStatic"
-  | "redFlicker"
-  | "redBlueFlicker";
-
-export type TLanternState = {
-  isTurnedOn: boolean;
-  modes: TModes[];
-  modeIndex: number;
-  submodes: {
-    regular: TIntensity[];
-    colorful: TColor[];
-  };
-  submodeIndexes: {
-    regular: number;
-    colorful: number;
-  };
-  showChargeIndicator: boolean;
-  isCharging: boolean;
-};
-
-export const initialState: TLanternState = {
+export const initialState: types.TState = {
   isTurnedOn: false,
   modes: ["regular", "colorful"],
   modeIndex: 0,
