@@ -44,6 +44,7 @@ const switchMode: TEpic = (action$, state$) =>
     rx.filter(([, state]) => state.lantern.isTurnedOn),
     rx.exhaustMap(() => {
       return rx.timer(TIME.DOUBLE_PRESS_THRESHOLD).pipe(
+        rx.mergeMap(() => rx.EMPTY),
         rx.raceWith(action$.pipe(ofType(actions.press.type), rx.take(1))),
         rx.exhaustMap(() =>
           action$.pipe(
