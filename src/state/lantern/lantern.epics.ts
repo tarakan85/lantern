@@ -28,12 +28,10 @@ const switchSubmode: TEpic = (action$, state$) =>
         rx.zipWith(action$.pipe(ofType(actions.release.type))),
         rx.map(() => actions.switchSubmode()),
         rx.takeUntil(
-          rx
-            .merge(
-              state$.pipe(rx.filter((state) => !state.lantern.isTurnedOn)),
-              action$.pipe(ofType(actions.press.type))
-            )
-            .pipe(rx.take(1))
+          rx.merge(
+            state$.pipe(rx.filter((state) => !state.lantern.isTurnedOn)),
+            action$.pipe(ofType(actions.press.type))
+          )
         )
       );
     })
@@ -82,11 +80,7 @@ const hideChargingIndicator: TEpic = (action$, state$) =>
     rx.switchMap(() => {
       return rx
         .timer(TIME.CHARGE_INDICATOR_AUTO_SHUTDOWN_TIMER)
-        .pipe(
-          rx.takeUntil(
-            action$.pipe(ofType(actions.putOnCharge.type), rx.take(1))
-          )
-        );
+        .pipe(rx.takeUntil(action$.pipe(ofType(actions.putOnCharge.type))));
     }),
     rx.map(() => actions.hideChargingIndicator())
   );
